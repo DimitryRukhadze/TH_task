@@ -4,9 +4,11 @@ from .models import Task, CW
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ("is_deleted",)
+    search_fields = ("code__startswith",)
 
 
 @admin.register(CW)
 class CWAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ("is_deleted",)
+    search_fields = ("perform_date", "next_due_date")
