@@ -36,7 +36,7 @@ class Task(BaseModel):
     # Максимальную длину указал исходя из самого длинного кода с запасом +10 символов
     code = models.CharField(max_length=50, verbose_name='Код задачи')
     description = models.TextField(verbose_name='Описание')
-    due_months = models.IntegerField(null=True, verbose_name='Месяцев до повтора задачи')
+    due_months = models.IntegerField(blank=True, verbose_name='Месяцев до повтора задачи')
 
     def __str__(self):
         return f'{self.code}, {self.description}, {self.complied_with.all()}'
