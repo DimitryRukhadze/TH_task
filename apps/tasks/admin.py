@@ -4,7 +4,7 @@ from .models import Task, CW
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('code', 'task_description', 'is_deleted', )
+    list_display = ('code', 'task_description', 'latest_cw', 'is_deleted')
     list_filter = ("is_deleted",)
     search_fields = ("code",)
     ordering = ['code']
@@ -12,6 +12,10 @@ class TaskAdmin(admin.ModelAdmin):
     def task_description(self, obj):
         return obj.description[:50]
 
+    def latest_cw(self, obj):
+        return obj.get_latest_cw
+
+    latest_cw.short_description = 'Последнее CW'
     task_description.short_description = 'Описание'
 
 
