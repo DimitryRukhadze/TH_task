@@ -41,12 +41,16 @@ class Task(BaseModel):
     def __str__(self):
         return self.code
 
+    @property
     def get_latest_cw(self):
-        return self.objects.active()
+        active_cws = self.complied_with.active()
+        if not active_cws:
+            return 'No active cws'
+        return active_cws.latest('perform_date')
+
 
 
 class CW(BaseModel):
-    # Это поле мне кажется лишним, т.к. получается, что у одной CW может быть несколько задач. Разве не должно быть наоборот?
     task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='complied_with')
     perform_date = models.DateField(verbose_name='Была выполнена')
     next_due_date = models.DateField(blank=True, null= True, verbose_name='Следующее выполнение')
