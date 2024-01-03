@@ -49,4 +49,4 @@ class CW(BaseModel):
     next_due_date = models.DateField(blank=True, null= True, verbose_name='Следующее выполнение')
 
     def __str__(self):
-        return self.task
+        return f'{self.task}'
