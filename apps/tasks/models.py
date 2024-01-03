@@ -53,5 +53,8 @@ class CW(BaseModel):
     perform_date = models.DateField(verbose_name='Была выполнена')
     next_due_date = models.DateField(blank=True, null=True, verbose_name='Следующее выполнение')
 
+    class Meta:
+        unique_together = ('task', 'perform_date')
+
     def __str__(self):
         return f'CW for task: {self.task}'
