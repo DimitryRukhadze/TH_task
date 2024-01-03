@@ -42,12 +42,10 @@ class Task(BaseModel):
         return self.code
 
     @property
-    def get_latest_cw(self):
+    def get_latest_cw(self) -> object | None:
         active_cws = self.complied_with.active()
-        if not active_cws:
-            return 'No active cws'
-        return active_cws.latest('perform_date')
-
+        if active_cws:
+            return active_cws.latest('perform_date')
 
 
 class CW(BaseModel):

@@ -18,6 +18,8 @@ class TaskAdmin(admin.ModelAdmin):
 
     def latest_cw(self, obj):
         latest_cw = obj.get_latest_cw
+        if not latest_cw:
+            return None
         url = (
             reverse('admin:tasks_cw_change', args=f'{latest_cw.id}')
             + '?'
