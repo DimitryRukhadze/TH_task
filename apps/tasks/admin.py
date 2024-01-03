@@ -1,4 +1,8 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.http import urlencode
+from django.utils.html import format_html
+
 from .models import Task, CW
 
 
@@ -13,7 +17,14 @@ class TaskAdmin(admin.ModelAdmin):
         return obj.description[:50]
 
     def latest_cw(self, obj):
-        return obj.get_latest_cw
+        latest_cw = obj.get_latest_cw
+        url = (
+            reverse('admin:tasks_cw_change', args=f'{latest_cw.id}')
+            + '?'
+            + urlencode({'tasks__id': f'{obj.id}'})
+        )
+        return format_html('<a href="{}">{}</a>', url, latest_cw)
+
 
     latest_cw.short_description = 'Последнее CW'
     task_description.short_description = 'Описание'
