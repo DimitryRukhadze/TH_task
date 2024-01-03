@@ -51,7 +51,7 @@ class Task(BaseModel):
 class CW(BaseModel):
     task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='complied_with')
     perform_date = models.DateField(verbose_name='Была выполнена')
-    next_due_date = models.DateField(blank=True, null= True, verbose_name='Следующее выполнение')
+    next_due_date = models.DateField(blank=True, null=True, verbose_name='Следующее выполнение')
 
     def __str__(self):
-        return f'{self.task}'
+        return f'CW for task: {self.task}'

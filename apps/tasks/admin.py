@@ -18,8 +18,10 @@ class TaskAdmin(admin.ModelAdmin):
 
     def latest_cw(self, obj):
         latest_cw = obj.get_latest_cw
+
         if not latest_cw:
             return None
+
         url = (
             reverse('admin:tasks_cw_change', args=f'{latest_cw.id}')
             + '?'
@@ -34,7 +36,12 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(CW)
 class CWAdmin(admin.ModelAdmin):
-    list_display = ("task", "perform_date", "next_due_date", "is_deleted")
+    list_display = ("related_task", "perform_date", "next_due_date", "is_deleted")
     list_filter = ("is_deleted",)
     search_fields = ("task", )
     ordering = ['-perform_date']
+
+    def related_task(self, obj):
+        return obj
+
+    related_task.short_description = 'CW'
