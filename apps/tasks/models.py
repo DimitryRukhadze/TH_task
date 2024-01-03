@@ -41,6 +41,9 @@ class Task(BaseModel):
     def __str__(self):
         return self.code
 
+    def get_latest_cw(self):
+        return self.objects.active()
+
 
 class CW(BaseModel):
     # Это поле мне кажется лишним, т.к. получается, что у одной CW может быть несколько задач. Разве не должно быть наоборот?
