@@ -34,12 +34,12 @@ class BaseModel(models.Model):
 
 class Task(BaseModel):
     # Максимальную длину указал исходя из самого длинного кода с запасом +10 символов
-    code = models.CharField(max_length=50, verbose_name='Код задачи')
+    code = models.CharField(max_length=250, verbose_name='Код задачи')
     description = models.TextField(verbose_name='Описание')
-    due_months = models.IntegerField(blank=True, verbose_name='Месяцев до повтора задачи')
+    due_months = models.IntegerField(blank=True, null=True, verbose_name='Месяцев до повтора задачи')
 
     def __str__(self):
-        return f'{self.code}, {self.description}, {self.complied_with.all()}'
+        return self.code
 
 
 class CW(BaseModel):
@@ -49,5 +49,4 @@ class CW(BaseModel):
     next_due_date = models.DateField(verbose_name='Следующее выполнение')
 
     def __str__(self):
-        tasks = ', '.join(task.code for task in self.task.all())
-        return f'Tasks: {tasks}\n perfomed at: {self.perform_date}\n next_due_date: {self.next_due_date}'
+        return self.task
