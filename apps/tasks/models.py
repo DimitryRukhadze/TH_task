@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 from django.utils import timezone
 
 
@@ -55,6 +55,12 @@ class CW(BaseModel):
 
     class Meta:
         unique_together = ('task', 'perform_date')
+        constraints = [
+            models.CheckConstraint(
+                name='perform_date_gt_today',
+                check=Q(perform_date__lte=timezone.now().date())
+            )
+        ]
 
     def __str__(self):
         return f'CW for task: {self.task}'
