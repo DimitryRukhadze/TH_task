@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import QuerySet, Q
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 
 
@@ -11,8 +11,8 @@ class BaseQuerySet(QuerySet):
 class BaseModel(models.Model):
     is_deleted = models.BooleanField("Deleted", default=False)
 
-    created_at = models.DateTimeField(db_index=True, verbose_name="Создано", default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Изменено")
+    created_at = models.DateTimeField("Created", db_index=True, default=timezone.now)
+    updated_at = models.DateTimeField("Changed", auto_now=True)
 
     objects = BaseQuerySet.as_manager()
 
@@ -34,33 +34,34 @@ class BaseModel(models.Model):
 
 class Task(BaseModel):
     # Максимальную длину указал исходя из самого длинного кода с запасом +10 символов
-    code = models.CharField(max_length=250, verbose_name='Код задачи')
-    description = models.TextField(verbose_name='Описание')
-    due_months = models.IntegerField(blank=True, null=True, verbose_name='Месяцев до повтора задачи')
+    code = models.CharField("Task code", max_length=250)
+    description = models.TextField("Description")
+    due_months = models.IntegerField("Due months", blank=True, null=True)
 
     def __str__(self):
         return self.code
 
     @property
-    def get_latest_cw(self) -> object | None:
-        active_cws = self.complied_with.active()
-        if active_cws:
-            return active_cws.latest('perform_date')
+    def compliance(self) -> object | None:
+        try:
+            return self.compliances.latest("perform_date")
+        except CW.DoesNotExist:
+            return None
 
 
 class CW(BaseModel):
-    task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name='complied_with')
-    perform_date = models.DateField(verbose_name='Была выполнена')
-    next_due_date = models.DateField(blank=True, null=True, verbose_name='Следующее выполнение')
+    task = models.ForeignKey("Task", verbose_name="Task", on_delete=models.CASCADE, related_name="compliances")
+    perform_date = models.DateField("Perform date")
+    next_due_date = models.DateField("Next due date", blank=True, null=True)
 
     class Meta:
-        unique_together = ('task', 'perform_date')
+        unique_together = ("task", "perform_date")
         constraints = [
             models.CheckConstraint(
-                name='perform_date_gt_today',
+                name="perform_date_gt_today",
                 check=Q(perform_date__lte=timezone.now().date())
             )
         ]
 
     def __str__(self):
-        return f'CW for task: {self.task}'
+        return f"CW for task: {self.task}"

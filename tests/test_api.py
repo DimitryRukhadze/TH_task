@@ -102,14 +102,23 @@ def test_get_cw(client):
 
 @pytest.mark.django_db
 def test_get_cws_by_task(client):
+    # Если ты хочешь реализовать механизм вывода истории всех выполнений, 
+    # тогда лучше делать endpoint вида /api/task/{task_id}/compliances/
+    # в файле api/urls.py указал тебе все пути
     response = client.get('/api/cws/by_task', {'task_code': 'code_str'})
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_create_cw(client):
+    # TODO:
+    # 1) Проверить, что выводится ошибка создания, 
+    # если дата нового CW больше последнего (при его наличии)
+    # 2) Проверить, что выводится ошибка создания,
+    # если дата нового CW больше текущей
+
     payload = {
-        'task': 'RT120',
+        'task': 'RT120', # очевидно, что надо передавать не код таска - он не уникален, а ID!
         'perform_date': '2014-02-22'
     }
     response = client.post('/api/cws/create', data=payload)
@@ -118,6 +127,6 @@ def test_create_cw(client):
 
 @pytest.mark.django_db
 def test_delete_cws(client):
-
+    # не комментирую - реализации не закончена
     response = client.delete('/api/cws/delete')
     assert response.status_code == 200
