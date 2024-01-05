@@ -16,6 +16,12 @@ class TaskOut(Schema):
     due_month: int = None
 
 
+class TaskIn(Schema):
+    code: str
+    description: str
+    due_month: int = None
+
+
 @api.get("tasks", response=List[TaskOut])
 def get_all_tasks(request):
     tasks_queryset = Task.objects.active()
