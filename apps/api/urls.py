@@ -1,28 +1,15 @@
 from django.urls import path
 from django.shortcuts import get_object_or_404
-from ninja import NinjaAPI, Schema
-from typing import List
+from ninja import NinjaAPI
 
 from apps.tasks.models import Task
+from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut
 
 
 api = NinjaAPI()
 
 
-class TaskOut(Schema):
-    pk: int
-    code: str
-    description: str
-    due_month: int = None
-
-
-class TaskIn(Schema):
-    code: str
-    description: str
-    due_month: int = None
-
-
-@api.get("tasks", response=List[TaskOut])
+@api.get("tasks", response=list[TaskOut])
 def get_all_tasks(request):
     tasks_queryset = Task.objects.active()
     return tasks_queryset
