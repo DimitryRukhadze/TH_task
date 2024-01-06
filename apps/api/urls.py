@@ -30,7 +30,7 @@ def get_all_tasks(request):
 
 @api.get("tasks/{task_id}", response=TaskOut)
 def get_task(request, task_id: int):
-    task = get_object_or_404(Task, id=task_id)
+    task = get_object_or_404(Task, pk=task_id)
     return task
 
 

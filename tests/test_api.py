@@ -44,13 +44,13 @@ class TestTasks:
         ]
     )
     def test_get_task(self, client, task_attrs):
-        false_response = client.get('/api/tasks', {'task_id': 300})
+        false_response = client.get('/api/tasks/300')
         false_response_data = json.loads(false_response.content.decode())
-        assert not false_response_data
+        assert false_response.status_code == 404
 
         task = Task.objects.create(code=task_attrs['code'], description=task_attrs['description'])
-        response = client.get('/api/tasks', {'task_id': task.pk})
-        response_obj_data = json.loads(response.content.decode())[0]
+        response = client.get(f'/api/tasks/{task.pk}')
+        response_obj_data = json.loads(response.content.decode())
         assert response.status_code == 200
 
         for task_field in task._meta.get_fields():
