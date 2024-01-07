@@ -12,7 +12,7 @@ class TaskOut(Schema):
 class TaskIn(Schema):
     code: str
     description: str
-    due_month: int = None
+    due_months: int = None
 
 
 class ComplianceOut(Schema):
