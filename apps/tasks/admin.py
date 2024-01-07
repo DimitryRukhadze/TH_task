@@ -17,7 +17,7 @@ class TaskAdmin(admin.ModelAdmin):
         return obj.description[:50]
 
     def latest_cw(self, obj):
-        latest_cw = obj.get_latest_cw
+        latest_cw = obj.compliance
 
         if not latest_cw:
             return None
