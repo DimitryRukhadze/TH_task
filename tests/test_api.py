@@ -20,6 +20,7 @@ WRONG_TASK_PAYLOAD = [
     {"code": "AC76-160609", "description": "long_str", "due_months": "6"},
 ]
 
+# Пытался перевести код тестов на эту фикстуру, но не преуспел. Из за этого использую глобальные переменные
 @pytest.fixture
 def correct_task_payload(scope='class'):
     task_payload = [

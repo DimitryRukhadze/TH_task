@@ -38,6 +38,7 @@ def update_tasks(request, task_id: int, payload: TaskIn):
 
     return update_obj
 
+
 urlpatterns = [
     path("", api.urls),
 ]
