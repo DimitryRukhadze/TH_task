@@ -44,7 +44,7 @@ class TestTasks:
         tasks = bulk_tasks(correct_task_payload)
         Task.objects.bulk_create(tasks)
 
-        response = nclient.get('/api/tasks')
+        response = client.get('/api/tasks')
         assert response.status_code == 200
         for task in tasks:
             assert Task.objects.get(pk=task.pk)
