@@ -71,11 +71,11 @@ class TestTasks:
                 assert task.task_field == response_obj_data[task_field]
 
     def test_create_tasks(self, client):
-        response_single_task = client.post('/api/tasks', payload=CORRECT_TASK_PAYLOAD[:1])
+        response_single_task = client.post('/api/tasks', json=CORRECT_TASK_PAYLOAD[:1])
         assert response_single_task.status_code == 200
         assert response_single_task[0] == Task.objects.get(pk=response_single_task[0].pk)
 
-        response_bulk_tasks = client.post('/api/tasks', payload=CORRECT_TASK_PAYLOAD[1:])
+        response_bulk_tasks = client.post('/api/tasks', json=CORRECT_TASK_PAYLOAD[1:])
         assert response_bulk_tasks.status_code == 200
 
         for obj in response_bulk_tasks:
