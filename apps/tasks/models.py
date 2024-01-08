@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import QuerySet, Q
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 
 class BaseQuerySet(QuerySet):
@@ -31,9 +32,11 @@ class BaseModel(models.Model):
             self.is_deleted = True
             self.save()
 
+    @staticmethod
+    def get_object_or_404(obj: object, **kwargs) -> object:
+        return get_object_or_404(obj, is_deleted=False, **kwargs)
 
 class Task(BaseModel):
-    # Максимальную длину указал исходя из самого длинного кода с запасом +10 символов
     code = models.CharField("Task code", max_length=250)
     description = models.TextField("Description")
     due_months = models.IntegerField("Due months", blank=True, null=True)
@@ -58,7 +61,7 @@ class CW(BaseModel):
         unique_together = ("task", "perform_date")
         constraints = [
             models.CheckConstraint(
-                name="perform_date_gt_today",
+                name="perform_date_lte_today",
                 check=Q(perform_date__lte=timezone.now().date())
             )
         ]

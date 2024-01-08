@@ -6,7 +6,7 @@ class TaskOut(Schema):
     pk: int
     code: str
     description: str
-    due_month: int = None
+    due_months: int | None = None
 
 
 class TaskIn(Schema):
@@ -17,12 +17,11 @@ class TaskIn(Schema):
 
 class ComplianceOut(Schema):
     pk: int
-    task: int
+    task: TaskOut
     perform_date: date
-    next_due_date: date = None
+    next_due_date: date | None = None
 
 
 class ComplianceIn(Schema):
-    task: int
     perform_date: date
     next_due_date: date = None
