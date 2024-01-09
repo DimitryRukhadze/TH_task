@@ -80,14 +80,13 @@ def delete_cw(request, cw_id):
 @api.put("tasks/{task_id}/cws/{cw_id}/", response=ComplianceOut)
 def update_cw(request, cw_id, payload: ComplianceIn):
 
-    update_cw = BaseModel.get_object_or_404(CW, pk=cw_id)
+    cw = BaseModel.get_object_or_404(CW, pk=cw_id)
 
-    for key, value in payload.dict().items():
-        setattr(update_cw, key, value)
+    cw.perform_date = payload.dict()['perform_date']
 
-    update_cw.save()
+    cw.save()
 
-    return update_cw
+    return cw
 
 
 urlpatterns = [

@@ -44,7 +44,10 @@ def test_get_all_tasks(client):
 @pytest.mark.django_db
 def test_get_task(client, task_attrs):
 
-    task = Task.objects.create(code=task_attrs['code'], description=task_attrs['description'])
+    task = Task.objects.create(
+        code=task_attrs['code'],
+        description=task_attrs['description']
+        )
 
     response = client.get(f'/api/tasks/{task.pk}/')
     false_response = client.get(f'/api/tasks/{task.pk + 100}/')
@@ -185,7 +188,7 @@ def test_delete_task(client, task_attrs):
     ]
 )
 @pytest.mark.django_db
-def test_create_cws_for_task(client, num, result):
+def test_create_cw_for_task(client, num, result):
     today = timezone.now().date()
     perf_date = today - timezone.timedelta(days=1)
 
@@ -247,28 +250,25 @@ def test_delete_cws(client):
 
 
 @pytest.mark.django_db
-def test_update_cws(client):
+def test_update_cw(client):
     today = timezone.now().date()
-    yesterday = today - timezone.timedelta(days=1)
-    another_prev_date = today - timezone.timedelta(days=10)
 
     task = Task.objects.create(code='00-IJM-001', description='long_str')
-    today_cws_payload = {'perform_date': today}
-    yesterday_cws_payload = {'perform_date': yesterday}
-    prev_cws_payload = {'perform_date': another_prev_date}
+    today_cws_attrs = {
+        "task": task,
+        "perform_date": today
+        }
 
-    bulk_cws_payload = [today_cws_payload, yesterday_cws_payload, prev_cws_payload]
+    cw = CW.objects.create(**today_cws_attrs)
 
-    cws = [CW(**fields) for fields in bulk_cws_payload]
-
-    CW.objects.bulk_create(cws)
-
-    for cw in cws:
-        update_payload = {'perform_date': cw.perform_date - timezone.timedelta(days=1)}
-        response = client.put(
-            f'/api/tasks/{task.pk}/cws/{cw.pk}/',
-            json.dumps(update_payload),
-            content_type='application/json'
-        )
-        assert response.status_code == 200
-        assert cw.perform_date == update_payload['perform_date']
+    update_payload = {
+        'perform_date': (cw.perform_date - timezone.timedelta(days=1)).strftime("%Y-%m-%d")
+        }
+    response = client.put(
+        f'/api/tasks/{task.pk}/cws/{cw.pk}/',
+        json.dumps(update_payload),
+        content_type='application/json'
+    )
+    assert response.status_code == 200
+    updated_cw = json.loads(response.content)
+    assert updated_cw['perform_date'] == update_payload['perform_date']
