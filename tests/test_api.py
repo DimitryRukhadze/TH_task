@@ -190,7 +190,7 @@ def test_delete_task(client, task_attrs):
 @pytest.mark.django_db
 def test_create_cw_for_task(client, num, result):
     today = timezone.now().date()
-    perf_date = today - timezone.timedelta(days=1)
+    perf_date = today - timezone.timedelta(days=num)
 
     task = Task.objects.create(code='00-IJM-001', description='long_str')
 
@@ -201,7 +201,7 @@ def test_create_cw_for_task(client, num, result):
         content_type='application/json'
     )
 
-    assert response.status_code == 200
+    assert response.status_code == result
 
 
 @pytest.mark.django_db
@@ -262,8 +262,11 @@ def test_update_cw(client):
     cw = CW.objects.create(**today_cws_attrs)
 
     update_payload = {
-        'perform_date': (cw.perform_date - timezone.timedelta(days=1)).strftime("%Y-%m-%d")
+        'perform_date': (
+            cw.perform_date - timezone.timedelta(days=1)
+            ).strftime("%Y-%m-%d")
         }
+
     response = client.put(
         f'/api/tasks/{task.pk}/cws/{cw.pk}/',
         json.dumps(update_payload),

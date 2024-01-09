@@ -62,7 +62,9 @@ class CW(BaseModel):
         on_delete=models.CASCADE,
         related_name="compliances"
         )
-    perform_date = models.DateField("Perform date")
+    perform_date = models.DateField(
+        "Perform date",
+        )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
 
     class Meta:

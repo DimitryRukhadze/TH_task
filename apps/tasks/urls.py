@@ -1,94 +1,67 @@
 from django.urls import path
-from django.shortcuts import get_object_or_404
 
 
-from ninja import NinjaAPI
+from ninja.router import Router
 
 from .models import Task, CW, BaseModel
 from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut
-
-
-api = NinjaAPI()
-
-
-@api.get("tasks/", response=list[TaskOut])
-def get_all_tasks(request):
-    tasks_queryset = Task.objects.active()
-    return tasks_queryset
-
-
-@api.get("tasks/{task_id}/", response=TaskOut)
-def get_task(request, task_id: int):
-    return get_object_or_404(Task, pk=task_id)
-
-
-@api.post("tasks/", response=list[TaskOut])
-def create_tasks(request, payload: list[TaskIn]):
-    new_objs = Task.objects.bulk_create(
-        [
-            Task(**fields.dict())
-            for fields in payload
-        ]
+from .services import (
+    get_tasks,
+    get_task,
+    create_tasks,
+    update_tasks,
+    delete_task,
+    create_cw,
+    get_cws,
+    delete_cw,
+    update_cw
     )
-    return new_objs
 
 
-@api.put("tasks/{task_id}/", response=TaskOut)
-def update_tasks(request, task_id: int, payload: TaskIn):
-    update_obj = get_object_or_404(Task, pk=task_id)
-
-    for key, value in payload.dict().items():
-        setattr(update_obj, key, value)
-
-    update_obj.save()
-
-    return update_obj
+router = Router()
 
 
-@api.delete("tasks/{task_id}/")
-def delete_task(request, task_id: int):
-    requested_object = get_object_or_404(Task, pk=task_id)
-    requested_object.delete()
-
-    return {'successfully deleted': 200}
+@router.get("", response=list[TaskOut])
+def api_get_tasks(request):
+    return get_tasks()
 
 
-@api.post("tasks/{task_id}/cws/")
-def create_cws_for_task(request, task_id: int, payload: ComplianceIn):
-    task = Task.objects.get(pk=task_id)
-    cw_attrs = payload.dict()
-    cw_attrs.update(task=task)
-    cw = CW.objects.create(
-        task=cw_attrs['task'],
-        perform_date=cw_attrs['perform_date']
-        )
-    cw.save()
+@router.get("{task_id}/", response=TaskOut)
+def api_get_task(request, task_id: int):
+    return get_task(task_id)
 
 
-@api.get("tasks/{task_id}/cws/", response=list[ComplianceOut])
-def get_cws_for_task(request, task_id: int):
-    cws = CW.objects.filter(task=task_id)
-    return cws
+@router.post("", response=list[TaskOut])
+def api_create_tasks(request, payload: list[TaskIn]):
+    payload = [fields.dict() for fields in payload]
+    return create_tasks(payload)
 
 
-@api.delete("tasks/{task_id}/cws/{cw_id}/")
-def delete_cw(request, cw_id):
-    cw = BaseModel.get_object_or_404(CW, pk=cw_id)
-    cw.delete()
+@router.put("{task_id}/", response=TaskOut)
+def api_update_tasks(request, task_id: int, payload: TaskIn):
+    return update_tasks(task_id, payload.dict())
 
 
-@api.put("tasks/{task_id}/cws/{cw_id}/", response=ComplianceOut)
-def update_cw(request, cw_id, payload: ComplianceIn):
-
-    cw = BaseModel.get_object_or_404(CW, pk=cw_id)
-
-    cw.perform_date = payload.dict()['perform_date']
-
-    cw.save()
-
-    return cw
+@router.delete("{task_id}/")
+def api_delete_task(request, task_id: int):
+    return delete_task(task_id)
 
 
-urlpatterns = [
-    path("", api.urls),
-]
+@router.post("{task_id}/cws/", response=ComplianceOut)
+def api_create_cws(request, task_id: int, payload: ComplianceIn):
+    return create_cw(task_id, payload.dict())
+
+
+@router.get("{task_id}/cws/", response=list[ComplianceOut])
+def api_get_cws(request, task_id: int):
+    return get_cws(task_id)
+
+
+@router.delete("{task_id}/cws/{cw_id}/")
+def api_delete_cw(request, cw_id):
+    return delete_cw(cw_id)
+
+
+@router.put("{task_id}/cws/{cw_id}/", response=ComplianceOut)
+def api_update_cw(request, cw_id, payload: ComplianceIn):
+    return update_cw(cw_id, payload.dict())
