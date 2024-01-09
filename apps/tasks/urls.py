@@ -1,10 +1,10 @@
 from django.urls import path
 from django.shortcuts import get_object_or_404
-from django.utils.dateparse import parse_date
+
 
 from ninja import NinjaAPI
 
-from apps.tasks.models import Task, CW, BaseModel
+from .models import Task, CW, BaseModel
 from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut
 
 
@@ -24,7 +24,12 @@ def get_task(request, task_id: int):
 
 @api.post("tasks/", response=list[TaskOut])
 def create_tasks(request, payload: list[TaskIn]):
-    new_objs = Task.objects.bulk_create([Task(**fields.dict()) for fields in payload])
+    new_objs = Task.objects.bulk_create(
+        [
+            Task(**fields.dict())
+            for fields in payload
+        ]
+    )
     return new_objs
 
 
@@ -53,7 +58,10 @@ def create_cws_for_task(request, task_id: int, payload: ComplianceIn):
     task = Task.objects.get(pk=task_id)
     cw_attrs = payload.dict()
     cw_attrs.update(task=task)
-    cw = CW.objects.create(task=cw_attrs['task'], perform_date=cw_attrs['perform_date'])
+    cw = CW.objects.create(
+        task=cw_attrs['task'],
+        perform_date=cw_attrs['perform_date']
+        )
     cw.save()
 
 
