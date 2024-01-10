@@ -58,8 +58,8 @@ def api_delete_task(request, task_id: int):
 def api_create_cws(request, task_id: int, payload: ComplianceIn):
     try:
         new_cw = create_cw(task_id, payload.dict())
-    except ValidationError:
-        return 400, {"message": "Wrong perform date"}
+    except ValidationError as err:
+        return 400, {"message": err.message}
     return new_cw
 
 
@@ -84,6 +84,6 @@ def api_delete_cw(request, cw_id):
 def api_update_cw(request, cw_id, payload: ComplianceIn):
     try:
         cw = update_cw(cw_id, payload.dict())
-    except ValidationError:
-        return 400, {"message": "Wrong perform date"}
+    except ValidationError as err:
+        return 400, {"message": err.message}
     return cw

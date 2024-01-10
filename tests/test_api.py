@@ -85,6 +85,22 @@ def test_create_task(client, task_attrs):
 
 
 @pytest.mark.django_db
+def test_fail_create_cw_for_deleted_task(client):
+    perf_date = timezone.now().date()
+    task = Task.objects.create(code='00-IJM-001', description='long_str')
+
+    today_cws_payload = {"perform_date": perf_date.strftime("%Y-%m-%d")}
+    task.delete()
+
+    response = client.post(
+        f'/api/tasks/{task.pk}/cws/',
+        json.dumps(today_cws_payload),
+        content_type='application/json'
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
 def test_bulk_create_tasks(client):
     response_bulk_tasks = client.post(
         '/api/tasks/',
@@ -189,6 +205,10 @@ def test_delete_task(client, task_attrs):
     deleted_task = Task.objects.get(pk=task.pk)
     assert task.pk == deleted_task.pk
     assert deleted_task.is_deleted
+    response = client.delete(
+        f'/api/tasks/{task.pk}/',
+    )
+    assert response.status_code == 404
 
 
 @pytest.mark.parametrize(
