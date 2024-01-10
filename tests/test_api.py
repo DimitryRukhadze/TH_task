@@ -260,6 +260,7 @@ def test_delete_cws(client):
         response = client.delete(f'/api/tasks/{task.pk}/cws/{cw.pk}/')
         assert response.status_code == 404
 
+
 @pytest.mark.parametrize(
     'num,result',
     [
