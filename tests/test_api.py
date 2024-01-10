@@ -1,5 +1,6 @@
 import pytest
 import json
+import datetime
 
 from django.utils import timezone
 
@@ -75,7 +76,9 @@ def test_create_task(client, task_attrs):
     )
 
     assert response_single_task.status_code == 200
-    response_body_values = json.loads(response_single_task.content)[0].values()
+    response_body_values = json.loads(
+        response_single_task.content
+        )['items'][0].values()
 
     for value in task_attrs[0].values():
         assert value in response_body_values
@@ -89,6 +92,15 @@ def test_bulk_create_tasks(client):
         content_type='application/json'
     )
     assert response_bulk_tasks.status_code == 200
+
+    created_tasks = json.loads(
+        response_bulk_tasks.content
+    )['items']
+
+    for init_payload, res_payload in zip(CORRECT_TASK_PAYLOAD, created_tasks):
+        for key in init_payload.keys():
+            if key in res_payload.keys():
+                assert init_payload[key] == res_payload[key]
 
 
 @pytest.mark.parametrize(
@@ -222,8 +234,8 @@ def test_get_cws_for_task(client):
     response = client.get(f'/api/tasks/{task.pk}/cws/')
     assert response.status_code == 200
 
-    for obj_repr in json.loads(response.content):
-        assert obj_repr['task']['pk'] == task.pk
+    for obj_repr in json.loads(response.content)["items"]:
+        assert obj_repr["task"]["pk"] == task.pk
 
 
 @pytest.mark.django_db
@@ -248,22 +260,29 @@ def test_delete_cws(client):
         response = client.delete(f'/api/tasks/{task.pk}/cws/{cw.pk}/')
         assert response.status_code == 404
 
-
+@pytest.mark.parametrize(
+    'num,result',
+    [
+        (0, 400),
+        (-1, 200),
+        (1, 400)
+    ]
+)
 @pytest.mark.django_db
-def test_update_cw(client):
-    today = timezone.now().date()
+def test_update_cw(client, num, result):
+    init_cw_date = datetime.date(2023, 12, 12)
 
     task = Task.objects.create(code='00-IJM-001', description='long_str')
     today_cws_attrs = {
         "task": task,
-        "perform_date": today
+        "perform_date": init_cw_date
         }
 
     cw = CW.objects.create(**today_cws_attrs)
 
     update_payload = {
         'perform_date': (
-            cw.perform_date - timezone.timedelta(days=1)
+            cw.perform_date - timezone.timedelta(days=num)
             ).strftime("%Y-%m-%d")
         }
 
@@ -272,6 +291,8 @@ def test_update_cw(client):
         json.dumps(update_payload),
         content_type='application/json'
     )
-    assert response.status_code == 200
+
+    assert response.status_code == result
     updated_cw = json.loads(response.content)
-    assert updated_cw['perform_date'] == update_payload['perform_date']
+    if response.status_code == 200:
+        assert updated_cw['perform_date'] == update_payload['perform_date']

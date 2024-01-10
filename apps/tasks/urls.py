@@ -1,10 +1,9 @@
-from django.urls import path
-
-
 from ninja.router import Router
+from ninja.pagination import paginate
 
-from .models import Task, CW, BaseModel
-from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut
+from django.core.exceptions import ValidationError
+
+from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut, Error
 from .services import (
     get_tasks,
     get_task,
@@ -22,6 +21,7 @@ router = Router()
 
 
 @router.get("", response=list[TaskOut])
+@paginate
 def api_get_tasks(request):
     return get_tasks()
 
@@ -32,6 +32,7 @@ def api_get_task(request, task_id: int):
 
 
 @router.post("", response=list[TaskOut])
+@paginate
 def api_create_tasks(request, payload: list[TaskIn]):
     payload = [fields.dict() for fields in payload]
     return create_tasks(payload)
@@ -47,12 +48,23 @@ def api_delete_task(request, task_id: int):
     return delete_task(task_id)
 
 
-@router.post("{task_id}/cws/", response=ComplianceOut)
+@router.post(
+        "{task_id}/cws/",
+        response={
+            200: ComplianceOut,
+            400: Error
+            }
+        )
 def api_create_cws(request, task_id: int, payload: ComplianceIn):
-    return create_cw(task_id, payload.dict())
+    try:
+        new_cw = create_cw(task_id, payload.dict())
+    except ValidationError:
+        return 400, {"message": "Wrong perform date"}
+    return new_cw
 
 
 @router.get("{task_id}/cws/", response=list[ComplianceOut])
+@paginate
 def api_get_cws(request, task_id: int):
     return get_cws(task_id)
 
@@ -62,6 +74,16 @@ def api_delete_cw(request, cw_id):
     return delete_cw(cw_id)
 
 
-@router.put("{task_id}/cws/{cw_id}/", response=ComplianceOut)
+@router.put(
+        "{task_id}/cws/{cw_id}/",
+        response={
+            200: ComplianceOut,
+            400: Error
+            }
+        )
 def api_update_cw(request, cw_id, payload: ComplianceIn):
-    return update_cw(cw_id, payload.dict())
+    try:
+        cw = update_cw(cw_id, payload.dict())
+    except ValidationError:
+        return 400, {"message": "Wrong perform date"}
+    return cw

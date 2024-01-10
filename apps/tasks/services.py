@@ -1,18 +1,18 @@
-import datetime
-
-from django.utils.dateparse import parse_date
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 from .models import Task, CW, BaseModel
-from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut
 
 
-def validate_cw_perf_date(perform_date: datetime.date):
-    if parse_date(perform_date) > timezone.now().date():
+def validate_cw_perf_date(task: Task, perform_date):
+    if perform_date > timezone.now().date():
         raise ValidationError(
             f"{perform_date} is in the future"
+        )
+    if task.compliance and task.compliance.perform_date >= perform_date:
+        raise ValidationError(
+            f"{perform_date} is before latest compliance"
         )
 
 
@@ -54,6 +54,12 @@ def delete_task(task_pk):
 
 def create_cw(task_pk, payload):
     task = Task.objects.get(pk=task_pk)
+
+    try:
+        validate_cw_perf_date(task, payload['perform_date'])
+    except ValidationError:
+        raise
+
     payload.update(task=task)
     cw = CW.objects.create(**payload)
     cw.save()
@@ -73,6 +79,11 @@ def delete_cw(cw_pk):
 
 def update_cw(cw_pk, payload):
     cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
+    try:
+        validate_cw_perf_date(cw.task, payload['perform_date'])
+    except ValidationError:
+        raise
+
     cw.perform_date = payload['perform_date']
     cw.save()
 

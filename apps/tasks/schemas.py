@@ -25,3 +25,7 @@ class ComplianceOut(Schema):
 class ComplianceIn(Schema):
     perform_date: date
     next_due_date: date = None
+
+
+class Error(Schema):
+    message: str
