@@ -7,6 +7,7 @@ class TaskOut(Schema):
     code: str
     description: str
     due_months: int | None = None
+    next_due_date: date | None = None
 
 
 class TaskIn(Schema):

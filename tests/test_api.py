@@ -317,3 +317,23 @@ def test_update_cw(client, num, result):
     updated_cw = json.loads(response.content)
     if response.status_code == 200:
         assert updated_cw['perform_date'] == update_payload['perform_date']
+
+
+@pytest.mark.django_db
+def test_get_tasks_with_next_due_date():
+    today = timezone.now().date()
+    next_due_date = datetime.date(2023, 12, 12)
+
+    task = Task.objects.create(code='00-IJM-001', description='long_str')
+    cw_payload = {
+            "task": task,
+            "perform_date": today,
+            "next_due_date": next_due_date
+        }
+
+    cw = CW.objects.create(**cw_payload)
+
+    assert task.next_due_date == cw_payload["next_due_date"]
+    cw.next_due_date = None
+    cw.save()
+    assert not task.next_due_date
