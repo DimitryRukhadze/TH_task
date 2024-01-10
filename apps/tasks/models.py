@@ -55,11 +55,6 @@ class Task(BaseModel):
         except CW.DoesNotExist:
             return None
 
-    @property
-    def next_due_date(self):
-        latest_cw = self.compliance
-        return latest_cw.next_due_date
-
 
 class CW(BaseModel):
     task = models.ForeignKey(
