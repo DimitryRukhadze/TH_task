@@ -67,14 +67,15 @@ def create_cw(task_pk, payload):
 
 
 def get_cws(task_pk):
-    return CW.objects.filter(task=task_pk, is_deleted=False)
+    return CW.objects.filter(
+        task=task_pk,
+        is_deleted=False
+        ).order_by("perform_date")
 
 
 def delete_cw(cw_pk):
     cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
     cw.delete()
-    # Что вернуть??
-    return
 
 
 def update_cw(cw_pk, payload):
