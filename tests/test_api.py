@@ -236,6 +236,82 @@ def test_create_cw_for_task(client, num, result):
     assert response.status_code == result
 
 
+@pytest.mark.parametrize(
+        'due_months,perf_date,res_date',
+        [
+            (6, '2023-12-01', '2024-06-01'),
+            (5, '2023-12-01', '2024-05-01'),
+            (4, '2023-12-01', '2024-04-01'),
+        ]
+)
+@pytest.mark.django_db
+def test_due_date_count_for_cw_create(client, due_months, perf_date, res_date):
+
+    task = Task.objects.create(
+        code='00-IJM-001',
+        description='long_str',
+        due_months=due_months
+    )
+
+    cw_payload = {
+        "task": task.pk,
+        "perform_date": perf_date
+    }
+    response = client.post(
+        f'/api/tasks/{task.pk}/cws/',
+        json.dumps(cw_payload),
+        content_type='application/json'
+    )
+
+    assert response.status_code == 200
+    assert json.loads(response.content)['next_due_date'] == res_date
+
+
+@pytest.mark.parametrize(
+        'due_months,perf_date,update_date,res_date',
+        [
+            (6, '2023-12-01', '2024-01-01', '2024-07-01'),
+            (5, '2023-12-01', '2024-01-01', '2024-06-01'),
+            (4, '2023-12-01', '2024-01-01', '2024-05-01'),
+        ]
+)
+@pytest.mark.django_db
+def test_due_date_count_for_cw_update(
+        client,
+        due_months,
+        perf_date,
+        update_date,
+        res_date
+        ):
+
+    task = Task.objects.create(
+        code='00-IJM-001',
+        description='long_str',
+        due_months=due_months
+    )
+
+    cw_payload = {
+        "task": task,
+        "perform_date": perf_date
+    }
+
+    cw = CW.objects.create(**cw_payload)
+
+    update_payload = {
+        "perform_date": update_date
+    }
+
+    response = client.put(
+        f'/api/tasks/{task.pk}/cws/{cw.pk}/',
+        json.dumps(update_payload),
+        content_type='application/json'
+    )
+    print(json.loads(response.content))
+
+    assert response.status_code == 200
+    assert json.loads(response.content)['next_due_date'] == res_date
+
+
 @pytest.mark.django_db
 def test_get_cws_for_task(client):
     today = timezone.now().date()
@@ -334,6 +410,8 @@ def test_get_tasks_with_next_due_date():
     cw = CW.objects.create(**cw_payload)
 
     assert task.next_due_date == cw_payload["next_due_date"]
+
     cw.next_due_date = None
     cw.save()
+
     assert not task.next_due_date

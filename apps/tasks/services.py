@@ -1,5 +1,6 @@
 from datetime import date
 
+from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -23,6 +24,11 @@ def validate_task_exists(task_pk: int) -> bool:
     return Task.objects.active().filter(pk=task_pk).exists()
 
 
+def cnt_next_due(perf_date, months):
+    res_date = perf_date + relativedelta(months=months)
+    return res_date
+
+
 def get_tasks() -> QuerySet:
     return Task.objects.active().order_by("code", "description")
 
@@ -43,11 +49,17 @@ def create_tasks(payload: list[dict]) -> list[Task]:
 
 def update_tasks(task_pk: int, payload: dict) -> Task:
     update_obj = get_object_or_404(Task, pk=task_pk)
+    old_due_month = update_obj.due_months
 
     for key, value in payload.items():
         setattr(update_obj, key, value)
 
     update_obj.save()
+
+    if update_obj.due_months != old_due_month and update_obj.compliance:
+        cw = update_obj.compliance
+        cw.next_due_date = cnt_next_due(cw.perform_date, update_obj.due_months)
+        cw.save()
 
     return update_obj
 
@@ -66,8 +78,14 @@ def create_cw(task_pk: int, payload: dict) -> CW:
     validate_cw_perf_date(task, payload['perform_date'])
 
     payload.update(task=task)
+
+    if task.due_months:
+        next_due = cnt_next_due(payload['perform_date'], task.due_months)
+        payload.update(next_due_date=next_due)
+
     cw = CW.objects.create(**payload)
     cw.save()
+
     return cw
 
 
@@ -90,6 +108,10 @@ def update_cw(cw_pk: int, payload: dict) -> None:
     validate_cw_perf_date(cw.task, payload['perform_date'])
 
     cw.perform_date = payload['perform_date']
+
+    if cw.task.due_months:
+        cw.next_due_date = cnt_next_due(cw.perform_date, cw.task.due_months)
+
     cw.save()
 
     return cw
