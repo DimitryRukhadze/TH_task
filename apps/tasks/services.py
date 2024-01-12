@@ -1,10 +1,10 @@
 from datetime import date
 
-from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from dateutil.relativedelta import relativedelta
 
 from .models import Task, CW, BaseModel
 
@@ -24,9 +24,13 @@ def validate_task_exists(task_pk: int) -> bool:
     return Task.objects.active().filter(pk=task_pk).exists()
 
 
-def cnt_next_due(perf_date, months):
-    res_date = perf_date + relativedelta(months=months)
-    return res_date
+def cnt_next_due(task_id: int) -> None:
+    task = Task.objects.get(pk=task_id)
+    if not task.due_months:
+        return
+    cw = task.compliance
+    cw.next_due_date = cw.perform_date + relativedelta(months=task.due_months)
+    cw.save()
 
 
 def get_tasks() -> QuerySet:
@@ -49,17 +53,14 @@ def create_tasks(payload: list[dict]) -> list[Task]:
 
 def update_tasks(task_pk: int, payload: dict) -> Task:
     update_obj = get_object_or_404(Task, pk=task_pk)
-    old_due_month = update_obj.due_months
 
     for key, value in payload.items():
         setattr(update_obj, key, value)
 
     update_obj.save()
 
-    if update_obj.due_months != old_due_month and update_obj.compliance:
-        cw = update_obj.compliance
-        cw.next_due_date = cnt_next_due(cw.perform_date, update_obj.due_months)
-        cw.save()
+    from .tasks import update_next_due_date
+    update_next_due_date.delay(task_pk)
 
     return update_obj
 
@@ -78,13 +79,11 @@ def create_cw(task_pk: int, payload: dict) -> CW:
     validate_cw_perf_date(task, payload['perform_date'])
 
     payload.update(task=task)
-
-    if task.due_months:
-        next_due = cnt_next_due(payload['perform_date'], task.due_months)
-        payload.update(next_due_date=next_due)
-
     cw = CW.objects.create(**payload)
     cw.save()
+
+    from .tasks import update_next_due_date
+    update_next_due_date.delay(task_pk)
 
     return cw
 
@@ -109,9 +108,9 @@ def update_cw(cw_pk: int, payload: dict) -> None:
 
     cw.perform_date = payload['perform_date']
 
-    if cw.task.due_months:
-        cw.next_due_date = cnt_next_due(cw.perform_date, cw.task.due_months)
-
     cw.save()
+
+    from .tasks import update_next_due_date
+    update_next_due_date.delay(cw.task.pk)
 
     return cw

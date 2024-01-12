@@ -409,9 +409,9 @@ def test_get_tasks_with_next_due_date():
 
     cw = CW.objects.create(**cw_payload)
 
-    assert task.next_due_date == cw_payload["next_due_date"]
+    assert cw.next_due_date == cw_payload["next_due_date"]
 
     cw.next_due_date = None
     cw.save()
 
-    assert not task.next_due_date
+    assert not cw.next_due_date
