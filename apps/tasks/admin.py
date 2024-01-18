@@ -59,10 +59,16 @@ class CWAdmin(admin.ModelAdmin):
 @admin.register(Tolerance)
 class ToleranceAdmin(admin.ModelAdmin):
     list_display = (
-        "task",
+        "related_task",
         "pos_tol",
         "neg_tol",
-        "tol_type"
+        "tol_type",
+        "is_deleted"
     )
     search_fields = ("task", )
     ordering = ["task"]
+
+    def related_task(self, obj):
+        return obj
+
+    related_task.short_description = 'Tolerance'
