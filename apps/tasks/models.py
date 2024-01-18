@@ -55,6 +55,13 @@ class Task(BaseModel):
         except CW.DoesNotExist:
             return None
 
+    @property
+    def curr_tolerance(self) -> object | None:
+        try:
+            return self.tolerance.latest("created_at")
+        except Tolerance.DoesNotExist:
+            return None
+
 
 class CW(BaseModel):
     task = models.ForeignKey(
@@ -66,6 +73,7 @@ class CW(BaseModel):
         "Perform date",
         )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
+    adjusted_days = models.IntegerField("Adjustment", default=0)
 
     class Meta:
         unique_together = ("task", "perform_date")
@@ -83,7 +91,7 @@ class Tolerance(BaseModel):
     task = models.ForeignKey(
         "Task",
         on_delete=models.CASCADE,
-        related_name="adjustments"
+        related_name="tolerance"
     )
     pos_tol = models.FloatField("Positive adj", blank=True, null=True)
     neg_tol = models.FloatField("Negative_adj", blank=True, null=True)
