@@ -72,3 +72,19 @@ class CW(BaseModel):
 
     def __str__(self):
         return f"CW for task: {self.task}"
+
+
+class Tolerance(BaseModel):
+    class AdjUnit(models.TextChoices):
+        MONTHS = 'M'
+        DAYS = 'D'
+        PERCENTS = 'P'
+
+    task = models.ForeignKey(
+        "Task",
+        on_delete=models.CASCADE,
+        related_name="adjustments"
+    )
+    pos_adj = models.IntegerField("Positive adj", blank=True, null=True)
+    neg_adj = models.IntegerField("Negative_adj", blank=True, null=True)
+    adj_unit = models.CharField("Adj type", choices=AdjUnit, max_length=1)
