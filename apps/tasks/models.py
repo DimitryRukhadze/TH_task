@@ -75,7 +75,7 @@ class CW(BaseModel):
 
 
 class Tolerance(BaseModel):
-    class AdjUnit(models.TextChoices):
+    class TolType(models.TextChoices):
         MONTHS = 'M'
         DAYS = 'D'
         PERCENTS = 'P'
@@ -85,6 +85,14 @@ class Tolerance(BaseModel):
         on_delete=models.CASCADE,
         related_name="adjustments"
     )
-    pos_adj = models.IntegerField("Positive adj", blank=True, null=True)
-    neg_adj = models.IntegerField("Negative_adj", blank=True, null=True)
-    adj_unit = models.CharField("Adj type", choices=AdjUnit, max_length=1)
+    pos_tol = models.FloatField("Positive adj", blank=True, null=True)
+    neg_tol = models.FloatField("Negative_adj", blank=True, null=True)
+    tol_type = models.CharField(
+            "Tolerance type",
+            choices=TolType,
+            max_length=1,
+            default=TolType.MONTHS
+        )
+
+    def __str__(self):
+        return f"{self.task} tolerance"
