@@ -28,9 +28,9 @@ class TaskAdmin(admin.ModelAdmin):
             return None
 
         url = (
-            reverse('admin:tasks_cw_change', args=f'{latest_cw.id}')
+            reverse('admin:tasks_cw_change', args=f'{latest_cw.pk}')
             + '?'
-            + urlencode({'tasks__id': f'{obj.id}'})
+            + urlencode({'tasks__id': f'{obj.pk}'})
         )
         return format_html('<a href="{}">{}</a>', url, latest_cw)
 
@@ -44,6 +44,7 @@ class CWAdmin(admin.ModelAdmin):
         "related_task",
         "perform_date",
         "next_due_date",
+        "adjusted_days",
         "is_deleted"
         )
     list_filter = ("is_deleted",)

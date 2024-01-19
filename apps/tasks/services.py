@@ -24,12 +24,37 @@ def validate_task_exists(task_pk: int) -> bool:
     return Task.objects.active().filter(pk=task_pk).exists()
 
 
+def check_adjustment(task: Task, perform_date) -> bool:
+    latest_cw = task.compliance
+
+    if latest_cw and latest_cw.next_due_date:
+        return latest_cw.next_due_date == perform_date
+    return False
+
+
+def count_adjustment(task: Task, perf_date):
+    delta = perf_date - task.compliance.next_due_date
+    return delta.days
+
+
+def get_task_tolerance(task: Task) -> relativedelta | None:
+    tolerance = task.curr_tolerance
+    latest_cw = task.compliance
+
+    pos_span = latest_cw.next_due_date + relativedelta(days=tolerance.pos_tol)
+    neg_span = latest_cw.next_due_date + relativedelta(days=tolerance.neg_tol)
+
+    return neg_span, pos_span
+
+
 def cnt_next_due(task_id: int) -> None:
     task = Task.objects.get(pk=task_id)
     if not task.due_months:
         return
     cw = task.compliance
-    cw.next_due_date = cw.perform_date + relativedelta(months=task.due_months)
+
+    cw.next_due_date = cw.perform_date + relativedelta(months=task.due_months) - relativedelta(days=cw.adjusted_days)
+
     cw.save()
 
 
@@ -77,6 +102,13 @@ def create_cw(task_pk: int, payload: dict) -> CW:
     task = BaseModel.get_object_or_404(Task, pk=task_pk)
 
     validate_cw_perf_date(task, payload['perform_date'])
+
+    if check_adjustment:
+        tol_neg, tol_pos = get_task_tolerance(task)
+
+        if tol_neg < payload['perform_date'] < tol_pos:
+            adj = count_adjustment(task, payload['perform_date'])
+            payload.update(adjusted_days=adj)
 
     payload.update(task=task)
     cw = CW.objects.create(**payload)
