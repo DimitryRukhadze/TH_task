@@ -93,8 +93,8 @@ class Tolerance(BaseModel):
         on_delete=models.CASCADE,
         related_name="tolerance"
     )
-    pos_tol = models.FloatField("Positive adj", blank=True, null=True)
-    neg_tol = models.FloatField("Negative_adj", blank=True, null=True)
+    pos_tol = models.FloatField("Positive adj", default=0)
+    neg_tol = models.FloatField("Negative_adj", default=0)
     tol_type = models.CharField(
             "Tolerance type",
             choices=TolType,
