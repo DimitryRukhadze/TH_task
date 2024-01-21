@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from dateutil.relativedelta import relativedelta
 
-from .models import Task, CW, BaseModel
+from .models import Task, CW, BaseModel, Tolerance
 
 
 def validate_cw_perf_date(task: Task, perform_date: date) -> None:
@@ -28,7 +28,8 @@ def check_adjustment(task: Task, perform_date) -> bool:
     latest_cw = task.compliance
 
     if latest_cw and latest_cw.next_due_date:
-        return latest_cw.next_due_date == perform_date
+        print(latest_cw.next_due_date != perform_date)
+        return latest_cw.next_due_date != perform_date
     return False
 
 
@@ -37,14 +38,49 @@ def count_adjustment(task: Task, perf_date):
     return delta.days
 
 
-def get_task_tolerance(task: Task) -> relativedelta | None:
+def cnt_tol_span_days(tol: Tolerance, late_cw: CW) -> tuple:
+    if tol.pos_tol:
+        pos_tol_days = relativedelta(days=tol.pos_tol)
+        pos_span = late_cw.next_due_date + pos_tol_days
+    else:
+        pos_span = late_cw.next_due_date
+
+    if tol.neg_tol:
+        neg_tol_days = relativedelta(days=tol.neg_tol)
+        neg_span = late_cw.next_due_date + neg_tol_days
+    else:
+        neg_span = late_cw.next_due_date
+
+    return neg_span, pos_span
+
+
+def cnt_tol_span_months(tol: Tolerance, late_cw: CW) -> tuple:
+    if tol.pos_tol:
+        pos_tol_months = relativedelta(months=tol.pos_tol)
+        pos_span = late_cw.next_due_date + pos_tol_months
+    else:
+        pos_span = late_cw.next_due_date
+
+    if tol.neg_tol:
+        neg_tol_months = relativedelta(months=tol.neg_tol)
+        neg_span = late_cw.next_due_date + neg_tol_months
+    else:
+        neg_span = late_cw.next_due_date
+
+    return neg_span, pos_span
+
+
+def get_tolerance_span(task: Task) -> date | None:
     tolerance = task.curr_tolerance
     latest_cw = task.compliance
 
-    pos_span = latest_cw.next_due_date + relativedelta(days=tolerance.pos_tol)
-    neg_span = latest_cw.next_due_date + relativedelta(days=tolerance.neg_tol)
-
-    return neg_span, pos_span
+    if latest_cw:
+        if tolerance.tol_type == 'M':
+            return cnt_tol_span_months(tolerance, latest_cw)
+        if tolerance.tol_type == 'D':
+            return cnt_tol_span_days(tolerance, latest_cw)
+        if tolerance.tol_type == 'P':
+            print('TOLERANCE PERCENTS')
 
 
 def cnt_next_due(task_id: int) -> None:
@@ -53,9 +89,21 @@ def cnt_next_due(task_id: int) -> None:
         return
     cw = task.compliance
 
-    cw.next_due_date = cw.perform_date + relativedelta(months=task.due_months) - relativedelta(days=cw.adjusted_days)
+    if cw:
+        if cw.adjusted_days:
+            prev_cw = CW.objects.active().filter(
+                    task=task
+                ).order_by('-perform_date')[1]
 
-    cw.save()
+            cw.next_due_date = prev_cw.next_due_date + relativedelta(
+                    months=task.due_months
+                )
+        else:
+            cw.next_due_date = cw.perform_date + relativedelta(
+                    months=task.due_months
+                )
+
+        cw.save()
 
 
 def get_tasks() -> QuerySet:
@@ -103,10 +151,14 @@ def create_cw(task_pk: int, payload: dict) -> CW:
 
     validate_cw_perf_date(task, payload['perform_date'])
 
-    if check_adjustment:
-        tol_neg, tol_pos = get_task_tolerance(task)
+    if check_adjustment(task, payload['perform_date']):
+        tol_neg, tol_pos = get_tolerance_span(task)
+        if not tol_neg and tol_pos:
+            tol_neg = payload['perform_date']
+        if not tol_pos and tol_neg:
+            tol_pos = payload['perform_date']
 
-        if tol_neg < payload['perform_date'] < tol_pos:
+        if tol_neg <= payload['perform_date'] <= tol_pos:
             adj = count_adjustment(task, payload['perform_date'])
             payload.update(adjusted_days=adj)
 
