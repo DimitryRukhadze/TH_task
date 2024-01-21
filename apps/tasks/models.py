@@ -58,7 +58,7 @@ class Task(BaseModel):
     @property
     def curr_tolerance(self) -> object | None:
         try:
-            return self.tolerance.latest("created_at")
+            return self.tolerance.active().latest("created_at")
         except Tolerance.DoesNotExist:
             return None
 

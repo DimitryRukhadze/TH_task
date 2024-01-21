@@ -12,6 +12,7 @@ class TaskAdmin(admin.ModelAdmin):
             'code',
             'task_description',
             'latest_cw',
+            'curr_tolerance',
             'is_deleted'
         )
     list_filter = ("is_deleted",)
@@ -22,17 +23,17 @@ class TaskAdmin(admin.ModelAdmin):
         return obj.description[:50]
 
     def latest_cw(self, obj):
-        latest_cw = obj.compliance
+        cw = obj.compliance
 
-        if not latest_cw:
+        if not cw:
             return None
 
         url = (
-            reverse('admin:tasks_cw_change', args=f'{latest_cw.pk}')
+            reverse('admin:tasks_cw_change', args=(cw.pk, ))
             + '?'
             + urlencode({'tasks__id': f'{obj.pk}'})
         )
-        return format_html('<a href="{}">{}</a>', url, latest_cw)
+        return format_html('<a href="{}">{}</a>', url, cw)
 
     latest_cw.short_description = 'Последнее CW'
     task_description.short_description = 'Описание'

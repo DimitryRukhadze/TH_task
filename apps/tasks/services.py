@@ -1,3 +1,4 @@
+from math import ceil, floor
 from datetime import date
 
 from django.shortcuts import get_object_or_404
@@ -56,14 +57,51 @@ def cnt_tol_span_days(tol: Tolerance, late_cw: CW) -> tuple:
 
 def cnt_tol_span_months(tol: Tolerance, late_cw: CW) -> tuple:
     if tol.pos_tol:
-        pos_tol_months = relativedelta(months=tol.pos_tol)
+        add_months = int(tol.pos_tol)
+
+        if tol.pos_tol % int(tol.pos_tol):
+            add_days = ceil(30.5 / (tol.pos_tol % int(tol.pos_tol)))
+        else:
+            add_days = 0
+
+        pos_tol_months = relativedelta(days=ceil(add_days), months=add_months)
         pos_span = late_cw.next_due_date + pos_tol_months
+
     else:
         pos_span = late_cw.next_due_date
 
     if tol.neg_tol:
-        neg_tol_months = relativedelta(months=tol.neg_tol)
+        sub_months = int(tol.neg_tol)
+
+        if tol.neg_tol % int(tol.neg_tol):
+            sub_days = ceil(30.5 / (tol.neg_tol % int(tol.neg_tol)))
+        else:
+            sub_days = 0
+        neg_tol_months = relativedelta(days=sub_days, months=sub_months)
         neg_span = late_cw.next_due_date + neg_tol_months
+    else:
+        neg_span = late_cw.next_due_date
+
+    return neg_span, pos_span
+
+
+def cnt_tol_span_percents(
+            tol: Tolerance,
+            late_cw: CW,
+            due_months: int | float
+        ) -> tuple:
+
+    due_days = due_months * 30.5
+
+    if tol.pos_tol:
+        pos_days = ceil(due_days * (tol.pos_tol / 100))
+        pos_span = late_cw.next_due_date + relativedelta(days=pos_days)
+    else:
+        pos_span = late_cw.next_due_date
+
+    if tol.neg_tol:
+        neg_days = floor(due_days * (tol.neg_tol / 100))
+        neg_span = late_cw.next_due_date + relativedelta(days=neg_days)
     else:
         neg_span = late_cw.next_due_date
 
@@ -80,7 +118,7 @@ def get_tolerance_span(task: Task) -> date | None:
         if tolerance.tol_type == 'D':
             return cnt_tol_span_days(tolerance, latest_cw)
         if tolerance.tol_type == 'P':
-            print('TOLERANCE PERCENTS')
+            return cnt_tol_span_percents(tolerance, latest_cw, task.due_months)
 
 
 def cnt_next_due(task_id: int) -> None:
