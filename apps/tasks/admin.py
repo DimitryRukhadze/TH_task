@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
 
-from .models import Task, CW, Tolerance
+from .models import Task, CW, Requirements
 
 
 @admin.register(Task)
@@ -12,7 +12,7 @@ class TaskAdmin(admin.ModelAdmin):
             'code',
             'task_description',
             'latest_cw',
-            'active_tolerance',
+            'active_requirements',
             'is_deleted'
         )
     list_filter = ("is_deleted",)
@@ -38,21 +38,21 @@ class TaskAdmin(admin.ModelAdmin):
     latest_cw.short_description = 'Последнее CW'
     task_description.short_description = 'Описание'
 
-    def active_tolerance(self, obj):
-        active_tolerance = obj.curr_tolerance
+    def active_requirements(self, obj):
+        active_requirements = obj.curr_tolerance
 
-        if not active_tolerance:
+        if not active_requirements:
             return None
 
         url = (
             reverse(
                     "admin:tasks_tolerance_change",
-                    args=(active_tolerance.pk, )
+                    args=(active_requirements.pk, )
                 )
             + "?"
             + urlencode({"tasks__id": f"{obj.pk}"})
         )
-        return format_html("<a href='{}'>{}</a>", url, active_tolerance)
+        return format_html("<a href='{}'>{}</a>", url, active_requirements)
 
 
 @admin.register(CW)
@@ -74,13 +74,13 @@ class CWAdmin(admin.ModelAdmin):
     related_task.short_description = 'CW'
 
 
-@admin.register(Tolerance)
-class ToleranceAdmin(admin.ModelAdmin):
+@admin.register(Requirements)
+class RequirementsAdmin(admin.ModelAdmin):
     list_display = (
         "related_task",
-        "pos_tol",
-        "neg_tol",
-        "tol_type",
+        "pos_tol_mos",
+        "neg_tol_mos",
+        "mos_unit",
         "is_active",
         "is_deleted"
     )
@@ -90,4 +90,4 @@ class ToleranceAdmin(admin.ModelAdmin):
     def related_task(self, obj):
         return obj
 
-    related_task.short_description = 'Tolerance'
+    related_task.short_description = 'requirements'

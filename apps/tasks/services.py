@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from dateutil.relativedelta import relativedelta
 
-from .models import Task, CW, BaseModel, Tolerance
+from .models import Task, CW, BaseModel, Requirements
 
 
 def validate_cw_perf_date(task: Task, perform_date: date) -> None:
@@ -39,7 +39,7 @@ def count_adjustment(task: Task, perf_date):
     return delta.days
 
 
-def cnt_tol_span_days(tol: Tolerance, late_cw: CW) -> tuple:
+def cnt_tol_span_days(tol: Requirements, late_cw: CW) -> tuple:
     if tol.pos_tol:
         pos_tol_days = relativedelta(days=tol.pos_tol)
         pos_span = late_cw.next_due_date + pos_tol_days
@@ -55,7 +55,7 @@ def cnt_tol_span_days(tol: Tolerance, late_cw: CW) -> tuple:
     return neg_span, pos_span
 
 
-def cnt_tol_span_months(tol: Tolerance, late_cw: CW) -> tuple:
+def cnt_tol_span_months(tol: Requirements, late_cw: CW) -> tuple:
     if tol.pos_tol:
         add_months = int(tol.pos_tol)
 
@@ -86,7 +86,7 @@ def cnt_tol_span_months(tol: Tolerance, late_cw: CW) -> tuple:
 
 
 def cnt_tol_span_percents(
-            tol: Tolerance,
+            tol: Requirements,
             late_cw: CW,
             due_months: int | float
         ) -> tuple:
@@ -223,7 +223,7 @@ def delete_cw(cw_pk: int) -> None:
     cw.delete()
 
 
-def update_cw(cw_pk: int, payload: dict) -> None:
+def update_cw(cw_pk: int, payload: dict) -> CW:
     cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
 
     validate_cw_perf_date(cw.task, payload['perform_date'])

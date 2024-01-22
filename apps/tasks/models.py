@@ -56,10 +56,10 @@ class Task(BaseModel):
             return None
 
     @property
-    def curr_tolerance(self) -> object | None:
+    def curr_requirements(self) -> object | None:
         try:
-            return self.tolerance.latest("is_active")
-        except Tolerance.DoesNotExist:
+            return self.requirements.latest("is_active")
+        except Requirements.DoesNotExist:
             return None
 
 
@@ -82,7 +82,7 @@ class CW(BaseModel):
         return f"CW for task: {self.task}"
 
 
-class Tolerance(BaseModel):
+class Requirements(BaseModel):
     class TolType(models.TextChoices):
         MONTHS = 'M'
         DAYS = 'D'
@@ -91,12 +91,12 @@ class Tolerance(BaseModel):
     task = models.ForeignKey(
         "Task",
         on_delete=models.CASCADE,
-        related_name="tolerance"
+        related_name="requirements"
     )
-    pos_tol = models.FloatField("Positive adj", blank=True, null=True)
-    neg_tol = models.FloatField("Negative_adj", blank=True, null=True)
-    tol_type = models.CharField(
-            "Tolerance type",
+    pos_tol_mos = models.FloatField("MOS positive", blank=True, null=True)
+    neg_tol_mos = models.FloatField("MOS negative", blank=True, null=True)
+    mos_unit = models.CharField(
+            "MOS unit",
             choices=TolType,
             max_length=1,
             default=TolType.MONTHS
