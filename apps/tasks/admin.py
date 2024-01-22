@@ -81,9 +81,16 @@ class RequirementsAdmin(admin.ModelAdmin):
         "pos_tol_mos",
         "neg_tol_mos",
         "mos_unit",
+        "pos_tol_hrs",
+        "neg_tol_hrs",
+        "hrs_unit",
+        "pos_tol_afl",
+        "neg_tol_afl",
+        "afl_unit",
         "is_active",
         "is_deleted"
     )
+
     search_fields = ("task", )
     ordering = ["task"]
 

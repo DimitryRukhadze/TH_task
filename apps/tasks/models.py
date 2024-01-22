@@ -83,11 +83,12 @@ class CW(BaseModel):
 
 class Requirements(BaseModel):
     class TolType(models.TextChoices):
-        MONTHS = 'M'
-        DAYS = 'D'
-        PERCENTS = 'P'
-        HOURS = 'H'
-        CYCLES = 'C'
+        MONTHS = "M"
+        DAYS = "D"
+        PERCENTS = "P"
+        HOURS = "H"
+        CYCLES = "C"
+        EMPTY = "E"
 
         @classmethod
         def group_choices(cls, group_name: str) -> list:
@@ -95,15 +96,18 @@ class Requirements(BaseModel):
                 "MOS": {
                     cls.MONTHS: "Months",
                     cls.DAYS: "Days",
-                    cls.PERCENTS: "Percents"
+                    cls.PERCENTS: "Percents",
+                    cls.EMPTY: "Empty"
                 },
                 "HRS": {
                     cls.HOURS: "Hours",
-                    cls.PERCENTS: "Percents"
+                    cls.PERCENTS: "Percents",
+                    cls.EMPTY: "Empty"
                 },
                 "AFL/ENC": {
                     cls.CYCLES: "Cycles",
-                    cls.PERCENTS: "Percents"
+                    cls.PERCENTS: "Percents",
+                    cls.EMPTY: "Empty"
                 }
             }
 
@@ -125,7 +129,7 @@ class Requirements(BaseModel):
             "MOS unit",
             choices=TolType.group_choices('MOS'),
             max_length=1,
-            default=TolType.MONTHS
+            default=TolType.EMPTY
         )
 
     pos_tol_hrs = models.FloatField("HRS positive", blank=True, null=True)
@@ -134,16 +138,16 @@ class Requirements(BaseModel):
             "HRS unit",
             choices=TolType.group_choices("HRS"),
             max_length=1,
-            default=TolType.MONTHS
+            default=TolType.EMPTY
         )
 
     pos_tol_afl = models.FloatField("AFL/ENC positive", blank=True, null=True)
     neg_tol_afl = models.FloatField("AFL/ENC negative", blank=True, null=True)
-    hrs_unit = models.CharField(
+    afl_unit = models.CharField(
             "AFL/ENC unit",
             choices=TolType.group_choices("AFL/ENC"),
             max_length=1,
-            default=TolType.MONTHS
+            default=TolType.EMPTY
         )
 
     is_active = models.BooleanField("active_tolerance", default=False)
