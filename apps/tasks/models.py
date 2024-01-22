@@ -86,6 +86,31 @@ class Requirements(BaseModel):
         MONTHS = 'M'
         DAYS = 'D'
         PERCENTS = 'P'
+        HOURS = 'H'
+        CYCLES = 'C'
+
+        @classmethod
+        def group_choices(cls, group_name: str) -> list:
+            intervals = {
+                "MOS": {
+                    cls.MONTHS: "Months",
+                    cls.DAYS: "Days",
+                    cls.PERCENTS: "Percents"
+                },
+                "HRS": {
+                    cls.HOURS: "Hours",
+                    cls.PERCENTS: "Percents"
+                },
+                "AFL/ENC": {
+                    cls.CYCLES: "Cycles",
+                    cls.PERCENTS: "Percents"
+                }
+            }
+
+            return [
+                (name, value)
+                for name, value in intervals[group_name].items()
+            ]
 
     task = models.ForeignKey(
         "Task",
@@ -93,14 +118,34 @@ class Requirements(BaseModel):
         related_name="requirements"
     )
     due_months = models.IntegerField("Due months", blank=True, null=True)
+
     pos_tol_mos = models.FloatField("MOS positive", blank=True, null=True)
     neg_tol_mos = models.FloatField("MOS negative", blank=True, null=True)
     mos_unit = models.CharField(
             "MOS unit",
-            choices=TolType,
+            choices=TolType.group_choices('MOS'),
             max_length=1,
             default=TolType.MONTHS
         )
+
+    pos_tol_hrs = models.FloatField("HRS positive", blank=True, null=True)
+    neg_tol_hrs = models.FloatField("HRS negative", blank=True, null=True)
+    hrs_unit = models.CharField(
+            "HRS unit",
+            choices=TolType.group_choices("HRS"),
+            max_length=1,
+            default=TolType.MONTHS
+        )
+
+    pos_tol_afl = models.FloatField("AFL/ENC positive", blank=True, null=True)
+    neg_tol_afl = models.FloatField("AFL/ENC negative", blank=True, null=True)
+    hrs_unit = models.CharField(
+            "AFL/ENC unit",
+            choices=TolType.group_choices("AFL/ENC"),
+            max_length=1,
+            default=TolType.MONTHS
+        )
+
     is_active = models.BooleanField("active_tolerance", default=False)
 
     class Meta:
