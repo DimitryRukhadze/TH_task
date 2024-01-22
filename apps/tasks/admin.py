@@ -12,7 +12,7 @@ class TaskAdmin(admin.ModelAdmin):
             'code',
             'task_description',
             'latest_cw',
-            'curr_tolerance',
+            'active_tolerance',
             'is_deleted'
         )
     list_filter = ("is_deleted",)
@@ -37,6 +37,22 @@ class TaskAdmin(admin.ModelAdmin):
 
     latest_cw.short_description = 'Последнее CW'
     task_description.short_description = 'Описание'
+
+    def active_tolerance(self, obj):
+        active_tolerance = obj.curr_tolerance
+
+        if not active_tolerance:
+            return None
+
+        url = (
+            reverse(
+                    "admin:tasks_tolerance_change",
+                    args=(active_tolerance.pk, )
+                )
+            + "?"
+            + urlencode({"tasks__id": f"{obj.pk}"})
+        )
+        return format_html("<a href='{}'>{}</a>", url, active_tolerance)
 
 
 @admin.register(CW)
@@ -65,6 +81,7 @@ class ToleranceAdmin(admin.ModelAdmin):
         "pos_tol",
         "neg_tol",
         "tol_type",
+        "is_active",
         "is_deleted"
     )
     search_fields = ("task", )

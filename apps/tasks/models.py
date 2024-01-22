@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import QuerySet, UniqueConstraint, Q
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
@@ -58,7 +58,7 @@ class Task(BaseModel):
     @property
     def curr_tolerance(self) -> object | None:
         try:
-            return self.tolerance.active().latest("created_at")
+            return self.tolerance.latest("is_active")
         except Tolerance.DoesNotExist:
             return None
 
@@ -101,6 +101,16 @@ class Tolerance(BaseModel):
             max_length=1,
             default=TolType.MONTHS
         )
+    is_active = models.BooleanField("active_tolerance", default=False)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["task", "is_active"],
+                condition=Q(is_active=True),
+                name="unique_active_tolerance_for_task"
+            )
+        ]
 
     def __str__(self):
         return f"{self.task} tolerance"
