@@ -43,7 +43,6 @@ class BaseModel(models.Model):
 class Task(BaseModel):
     code = models.CharField("Task code", max_length=250)
     description = models.TextField("Description")
-    due_months = models.IntegerField("Due months", blank=True, null=True)
 
     def __str__(self):
         return self.code
@@ -93,6 +92,7 @@ class Requirements(BaseModel):
         on_delete=models.CASCADE,
         related_name="requirements"
     )
+    due_months = models.IntegerField("Due months", blank=True, null=True)
     pos_tol_mos = models.FloatField("MOS positive", blank=True, null=True)
     neg_tol_mos = models.FloatField("MOS negative", blank=True, null=True)
     mos_unit = models.CharField(
