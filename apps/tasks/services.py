@@ -7,7 +7,12 @@ from django.db.models import QuerySet
 
 from .models import Task, CW, BaseModel
 from .tasks import update_next_due_date
-from .interval_maths import check_adjustment, count_adjustment, get_mos_span
+from .interval_maths import (
+    check_adjustment,
+    count_adjustment,
+    get_mos_span,
+    get_hrs_span
+)
 
 
 def validate_cw_perf_date(task: Task, perform_date: date) -> None:
@@ -23,6 +28,45 @@ def validate_cw_perf_date(task: Task, perform_date: date) -> None:
 
 def validate_task_exists(task_pk: int) -> bool:
     return Task.objects.active().filter(pk=task_pk).exists()
+
+
+def get_task_requirements(task_pk: int, payload: dict) -> dict:
+    task = BaseModel.get_object_or_404(Task, pk=task_pk)
+    active_req = task.curr_requirements
+
+    req = {}
+
+    if active_req.mos_unit != "E":
+        tol_neg_mos, tol_pos_mos = get_mos_span(task)
+        if not tol_neg_mos and tol_pos_mos:
+            tol_neg_mos = payload['perform_date']
+        if not tol_pos_mos and tol_neg_mos:
+            tol_pos_mos = payload['perform_date']
+
+        req['mos_pos'] = tol_pos_mos
+        req['mos_neg'] = tol_neg_mos
+
+    if active_req.hrs_unit != "E":
+        tol_neg_mos, tol_pos_mos = get_hrs_span(task)
+        if not tol_neg_mos and tol_pos_mos:
+            tol_neg_mos = payload['perform_date']
+        if not tol_pos_mos and tol_neg_mos:
+            tol_pos_mos = payload['perform_date']
+
+        req['hrs_pos'] = tol_pos_mos
+        req['hrs_neg'] = tol_neg_mos
+
+#    if active_req.afl_unit != "Empty":
+#        tol_neg_mos, tol_pos_mos = get_afl_span(task)
+#        if not tol_neg_mos and tol_pos_mos:
+#            tol_neg_mos = payload['perform_date']
+#        if not tol_pos_mos and tol_neg_mos:
+#            tol_pos_mos = payload['perform_date']
+#
+#        req['afl_pos'] = tol_pos_mos
+#        req['afl_neg'] = tol_neg_mos
+
+        return req
 
 
 def get_tasks() -> QuerySet:
@@ -66,19 +110,20 @@ def delete_task(task_pk: int) -> dict:
 
 def create_cw(task_pk: int, payload: dict) -> CW:
     task = BaseModel.get_object_or_404(Task, pk=task_pk)
+    active_req = task.curr_requirements
 
     validate_cw_perf_date(task, payload['perform_date'])
 
-    if check_adjustment(task, payload['perform_date']):
-        tol_neg, tol_pos = get_mos_span(task)
-        if not tol_neg and tol_pos:
-            tol_neg = payload['perform_date']
-        if not tol_pos and tol_neg:
-            tol_pos = payload['perform_date']
+    if check_adjustment(task, payload):
+        req = get_task_requirements(task_pk, payload)
 
-        if tol_neg <= payload['perform_date'] <= tol_pos:
-            adj = count_adjustment(task, payload['perform_date'])
-            payload.update(adjusted_days=adj)
+        if active_req.mos_unit != 'E' and (req['mos_neg'] <= payload['perform_date'] <= req['mos_pos']):
+            adj = count_adjustment(task, payload)
+
+        if active_req.hrs_unit != 'E' and (req['hrs_neg'] <= payload['perform_hours'] <= req['hrs_pos']):
+            adj = count_adjustment(task, payload)
+
+        payload.update(adj)
 
     payload.update(task=task)
     cw = CW.objects.create(**payload)

@@ -62,6 +62,11 @@ class CWAdmin(admin.ModelAdmin):
         "perform_date",
         "next_due_date",
         "adjusted_days",
+        "perform_hours",
+        "next_due_hrs",
+        "adjusted_hrs",
+        "perform_cycles",
+        "next_due_cycles",
         "is_deleted"
         )
     list_filter = ("is_deleted",)

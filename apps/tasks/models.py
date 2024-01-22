@@ -64,15 +64,30 @@ class Task(BaseModel):
 
 class CW(BaseModel):
     task = models.ForeignKey(
-        "Task",
-        on_delete=models.CASCADE,
-        related_name="compliances"
+            "Task",
+            on_delete=models.CASCADE,
+            related_name="compliances"
         )
     perform_date = models.DateField(
-        "Perform date",
+            "Perform date",
+        )
+    perform_hours = models.FloatField(
+            "Perform hours",
+            default=0
+        )
+    perform_cycles = models.FloatField(
+            "Perform cycles",
+            default=0
         )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
-    adjusted_days = models.IntegerField("Adjustment", default=0)
+    next_due_hrs = models.FloatField("Next due hours", blank=True, null=True)
+    next_due_cycles = models.FloatField(
+            "Next due cycles",
+            blank=True,
+            null=True
+        )
+    adjusted_days = models.IntegerField("Adjustment mos", default=0)
+    adjusted_hrs = models.FloatField("Adjustment hrs", default=0)
 
     class Meta:
         unique_together = ("task", "perform_date")
@@ -122,6 +137,8 @@ class Requirements(BaseModel):
         related_name="requirements"
     )
     due_months = models.IntegerField("Due months", blank=True, null=True)
+    due_hrs = models.FloatField("Due hours", blank=True, null=True)
+    due_cycles = models.FloatField("Due cycles", blank=True, null=True)
 
     pos_tol_mos = models.FloatField("MOS positive", blank=True, null=True)
     neg_tol_mos = models.FloatField("MOS negative", blank=True, null=True)

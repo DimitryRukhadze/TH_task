@@ -28,12 +28,16 @@ class ComplianceOut(Schema):
     pk: int
     task: TaskOut
     perform_date: date
+    perform_hours: float | None = None
     next_due_date: date | None = None
+    next_due_hrs: float | None = None
 
 
 class ComplianceIn(Schema):
     perform_date: date
     next_due_date: date | None = None
+    perform_hours: float | None = None
+    next_due_hrs: float | None = None
 
 
 class Error(Schema):
