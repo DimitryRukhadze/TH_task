@@ -9,7 +9,8 @@ from .models import Task, CW, BaseModel
 from .tasks import update_next_due_date
 from .interval_maths import (
     check_adjustment,
-    count_adjustment,
+    count_mos_adjustment,
+    count_hrs_adjustment,
     get_mos_span,
     get_hrs_span
 )
@@ -47,14 +48,14 @@ def get_task_requirements(task_pk: int, payload: dict) -> dict:
         req['mos_neg'] = tol_neg_mos
 
     if active_req.hrs_unit != "E":
-        tol_neg_mos, tol_pos_mos = get_hrs_span(task)
-        if not tol_neg_mos and tol_pos_mos:
-            tol_neg_mos = payload['perform_date']
-        if not tol_pos_mos and tol_neg_mos:
-            tol_pos_mos = payload['perform_date']
+        tol_neg_hrs, tol_pos_hrs = get_hrs_span(task)
+        if not tol_neg_hrs and tol_pos_hrs:
+            tol_neg_mos = payload['perform_hours']
+        if not tol_pos_hrs and tol_neg_hrs:
+            tol_pos_mos = payload['perform_hours']
 
-        req['hrs_pos'] = tol_pos_mos
-        req['hrs_neg'] = tol_neg_mos
+        req['hrs_pos'] = tol_pos_hrs
+        req['hrs_neg'] = tol_neg_hrs
 
 #    if active_req.afl_unit != "Empty":
 #        tol_neg_mos, tol_pos_mos = get_afl_span(task)
@@ -116,12 +117,12 @@ def create_cw(task_pk: int, payload: dict) -> CW:
 
     if check_adjustment(task, payload):
         req = get_task_requirements(task_pk, payload)
-
+        adj = {}
         if active_req.mos_unit != 'E' and (req['mos_neg'] <= payload['perform_date'] <= req['mos_pos']):
-            adj = count_adjustment(task, payload)
+            adj["adjusted_days"] = count_mos_adjustment(task, payload)
 
         if active_req.hrs_unit != 'E' and (req['hrs_neg'] <= payload['perform_hours'] <= req['hrs_pos']):
-            adj = count_adjustment(task, payload)
+            adj["adjusted_hrs"] = count_hrs_adjustment(task, payload)
 
         payload.update(adj)
 

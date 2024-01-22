@@ -54,16 +54,16 @@ def check_adjustment(task: Task, payload: dict) -> bool:
     return False
 
 
-def count_adjustment(task: Task, payload: dict):
-    adjs = {}
+def count_mos_adjustment(task: Task, payload: dict):
     if payload.get("perform_date") and task.compliance.next_due_date:
         delta = payload["perform_date"] - task.compliance.next_due_date
-        adjs["adjusted_days"] = delta.days
+        return delta.days
+
+
+def count_hrs_adjustment(task: Task, payload: dict):
     if payload.get("perform_hours") and task.compliance.next_due_hrs:
         delta = payload["perform_hours"] - task.compliance.next_due_hrs
-        adjs["adjusted_hrs"] = delta
-
-    return adjs
+        return delta
 
 
 def cnt_mos_span_days(tol: Requirements, late_cw: CW) -> tuple:
@@ -133,8 +133,6 @@ def cnt_mos_span_percents(tol: Requirements, late_cw: CW) -> tuple:
 
 def cnt_hrs_span_hours(tol: Requirements, cw: CW) -> tuple:
 
-    due_hours = tol.due_hrs
-
     if tol.pos_tol_hrs:
         pos_span = cw.next_due_hrs + tol.pos_tol_hrs
     else:
@@ -144,7 +142,7 @@ def cnt_hrs_span_hours(tol: Requirements, cw: CW) -> tuple:
         neg_span = cw.next_due_hrs + tol.neg_tol_hrs
 
     else:
-        neg_span = due_hours
+        neg_span = cw.next_due_hrs
 
     return neg_span, pos_span
 
