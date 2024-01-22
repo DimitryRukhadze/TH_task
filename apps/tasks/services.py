@@ -39,7 +39,7 @@ def count_adjustment(task: Task, perf_date):
     return delta.days
 
 
-def cnt_tol_span_days(tol: Requirements, late_cw: CW) -> tuple:
+def cnt_mos_span_days(tol: Requirements, late_cw: CW) -> tuple:
     if tol.pos_tol:
         pos_tol_days = relativedelta(days=tol.pos_tol)
         pos_span = late_cw.next_due_date + pos_tol_days
@@ -55,7 +55,7 @@ def cnt_tol_span_days(tol: Requirements, late_cw: CW) -> tuple:
     return neg_span, pos_span
 
 
-def cnt_tol_span_months(tol: Requirements, late_cw: CW) -> tuple:
+def cnt_mos_span_months(tol: Requirements, late_cw: CW) -> tuple:
     if tol.pos_tol:
         add_months = int(tol.pos_tol)
 
@@ -85,7 +85,7 @@ def cnt_tol_span_months(tol: Requirements, late_cw: CW) -> tuple:
     return neg_span, pos_span
 
 
-def cnt_tol_span_percents(
+def cnt_mos_span_percents(
             tol: Requirements,
             late_cw: CW,
             due_months: int | float
@@ -108,17 +108,17 @@ def cnt_tol_span_percents(
     return neg_span, pos_span
 
 
-def get_tolerance_span(task: Task) -> date | None:
+def get_mos_span(task: Task) -> date | None:
     tolerance = task.curr_tolerance
     latest_cw = task.compliance
 
     if latest_cw:
         if tolerance.tol_type == 'M':
-            return cnt_tol_span_months(tolerance, latest_cw)
+            return cnt_mos_span_months(tolerance, latest_cw)
         if tolerance.tol_type == 'D':
-            return cnt_tol_span_days(tolerance, latest_cw)
+            return cnt_mos_span_days(tolerance, latest_cw)
         if tolerance.tol_type == 'P':
-            return cnt_tol_span_percents(tolerance, latest_cw, task.due_months)
+            return cnt_mos_span_percents(tolerance, latest_cw, task.due_months)
 
 
 def cnt_next_due(task_id: int) -> None:
@@ -190,7 +190,7 @@ def create_cw(task_pk: int, payload: dict) -> CW:
     validate_cw_perf_date(task, payload['perform_date'])
 
     if check_adjustment(task, payload['perform_date']):
-        tol_neg, tol_pos = get_tolerance_span(task)
+        tol_neg, tol_pos = get_mos_span(task)
         if not tol_neg and tol_pos:
             tol_neg = payload['perform_date']
         if not tol_pos and tol_neg:

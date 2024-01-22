@@ -39,14 +39,14 @@ class TaskAdmin(admin.ModelAdmin):
     task_description.short_description = 'Описание'
 
     def active_requirements(self, obj):
-        active_requirements = obj.curr_tolerance
+        active_requirements = obj.curr_requirements
 
         if not active_requirements:
             return None
 
         url = (
             reverse(
-                    "admin:tasks_tolerance_change",
+                    "admin:tasks_requirements_change",
                     args=(active_requirements.pk, )
                 )
             + "?"
