@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import QuerySet, UniqueConstraint, Q
+from django.db.models import QuerySet
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
@@ -43,7 +43,6 @@ class BaseModel(models.Model):
 class Task(BaseModel):
     code = models.CharField("Task code", max_length=250)
     description = models.TextField("Description")
-    due_months = models.IntegerField("Due months", blank=True, null=True)
 
     def __str__(self):
         return self.code
@@ -73,7 +72,7 @@ class CW(BaseModel):
         "Perform date",
         )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
-    adjusted_days = models.IntegerField("Adjustment", default=0)
+    adj_mos = models.IntegerField("Adjustment")
 
     class Meta:
         unique_together = ("task", "perform_date")
@@ -88,29 +87,64 @@ class Requirements(BaseModel):
         DAYS = 'D'
         PERCENTS = 'P'
 
+        @classmethod
+        def group_choices(cls, group_name):
+            interval = {
+                "DUE_UNIT": {
+                    cls.MONTHS: "Months",
+                    cls.DAYS: "Days",
+                },
+                "MOS_UNIT": {
+                    cls.MONTHS: "Months",
+                    cls.DAYS: "Days",
+                    cls.PERCENTS: "Percents"
+                }
+            }
+
+            return [
+                (choice, name)
+                for choice, name in interval[group_name].items()
+            ]
+
     task = models.ForeignKey(
         "Task",
         on_delete=models.CASCADE,
         related_name="requirements"
     )
-    pos_tol_mos = models.FloatField("MOS positive", blank=True, null=True)
-    neg_tol_mos = models.FloatField("MOS negative", blank=True, null=True)
-    mos_unit = models.CharField(
-            "MOS unit",
-            choices=TolType,
-            max_length=1,
-            default=TolType.MONTHS
-        )
-    is_active = models.BooleanField("active_tolerance", default=False)
 
-    class Meta:
-        constraints = [
-            UniqueConstraint(
-                fields=["task", "is_active"],
-                condition=Q(is_active=True),
-                name="unique_active_tolerance_for_task"
-            )
-        ]
+    due_months = models.DecimalField(
+        "Due_months",
+        max_digits=4,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    due_months_unit = models.CharField(
+        max_length=1,
+        choices=TolType.group_choices("DUE_UNIT")
+    )
+
+    tol_pos_mos = models.DecimalField(
+        "MOS positive",
+        max_digits=4,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    tol_neg_mos = models.DecimalField(
+        "MOS negative",
+        max_digits=4,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    tol_mos_unit = models.CharField(
+            "MOS unit",
+            choices=TolType.group_choices("MOS_UNIT"),
+            max_length=1,
+        )
+
+    is_active = models.BooleanField("active_tolerance", default=False)
 
     def __str__(self):
         return f"{self.task} tolerance"

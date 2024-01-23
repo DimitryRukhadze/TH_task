@@ -61,7 +61,7 @@ class CWAdmin(admin.ModelAdmin):
         "related_task",
         "perform_date",
         "next_due_date",
-        "adjusted_days",
+        "adj_mos",
         "is_deleted"
         )
     list_filter = ("is_deleted",)
@@ -78,9 +78,11 @@ class CWAdmin(admin.ModelAdmin):
 class RequirementsAdmin(admin.ModelAdmin):
     list_display = (
         "related_task",
-        "pos_tol_mos",
-        "neg_tol_mos",
-        "mos_unit",
+        "due_months",
+        "due_months_unit",
+        "tol_pos_mos",
+        "tol_neg_mos",
+        "tol_mos_unit",
         "is_active",
         "is_deleted"
     )
