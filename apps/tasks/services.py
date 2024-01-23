@@ -211,8 +211,9 @@ def get_task_reqs(task_id) -> list[Requirements]:
 def update_requirements(task_id, req_id, payload):
     validate_task_exists(task_id)
     req = BaseModel.get_object_or_404(Requirements, pk=req_id)
-    if payload.task:
-        req.task = payload.task
+    if payload.task and payload.task.pk != task_id:
+        validate_task_exists(payload.task.pk)
+        req.task = BaseModel.get_object_or_404(Task, pk=payload.task.pk)
     if payload.mos_unit:
         req.mos_unit = payload.mos_unit
     if payload.hrs_unit:
@@ -243,5 +244,7 @@ def update_requirements(task_id, req_id, payload):
     req.save()
     return req
 
-def delete_requirements():
-    pass
+
+def delete_requirements(req_id):
+    req = BaseModel.get_object_or_404(Requirements, pk=req_id)
+    req.delete()

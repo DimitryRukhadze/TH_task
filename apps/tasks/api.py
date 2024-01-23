@@ -24,7 +24,8 @@ from .services import (
     update_cw,
     get_task_reqs,
     create_requirements,
-    update_requirements
+    update_requirements,
+    delete_requirements
 )
 
 
@@ -115,7 +116,7 @@ def api_create_requirements(request, task_id, payload: ReqIn):
 
 
 @router.put(
-        "{task_id}/requirements/{req_id}",
+        "{task_id}/requirements/{req_id}/",
         response={200: ReqOut, 400: Error}
     )
 def api_update_requirements(request, task_id, req_id, payload: ReqIn):
@@ -124,3 +125,8 @@ def api_update_requirements(request, task_id, req_id, payload: ReqIn):
     except ValidationError as err:
         return 400, {"message": err.message}
     return req
+
+
+@router.delete("{task_id}/requirements/{req_id}/")
+def api_delete_requirements(request, req_id):
+    return delete_requirements(req_id)

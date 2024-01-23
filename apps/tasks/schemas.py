@@ -45,18 +45,19 @@ class ComplianceIn(Schema):
 
 
 class ReqIn(Schema):
+    task: TaskOut | None = None
     mos_unit: str = None
     hrs_unit: str = None
     afl_unit: str = None
     due_months: int | None = None
     due_hrs: float | None = None
     due_cycles: float | None = None
-    pos_tol_mos: float | None
-    neg_tol_mos: float | None
-    pos_tol_hrs: float | None
-    neg_tol_hrs: float | None
-    pos_tol_afl: float | None
-    neg_tol_afl: float | None
+    pos_tol_mos: float | None = None
+    neg_tol_mos: float | None = None
+    pos_tol_hrs: float | None = None
+    neg_tol_hrs: float | None = None
+    pos_tol_afl: float | None = None
+    neg_tol_afl: float | None = None
     is_active: bool = None
 
 
