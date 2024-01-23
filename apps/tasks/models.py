@@ -151,7 +151,9 @@ class Requirements(BaseModel):
             "MOS unit",
             choices=TolType.group_choices('MOS'),
             max_length=1,
-            default=TolType.EMPTY
+            default=TolType.EMPTY,
+            blank=True,
+            null=True
         )
 
     pos_tol_hrs = models.FloatField("HRS positive", blank=True, null=True)
@@ -160,7 +162,9 @@ class Requirements(BaseModel):
             "HRS unit",
             choices=TolType.group_choices("HRS"),
             max_length=1,
-            default=TolType.EMPTY
+            default=TolType.EMPTY,
+            blank=True,
+            null=True
         )
 
     pos_tol_afl = models.FloatField("AFL/ENC positive", blank=True, null=True)
@@ -169,7 +173,9 @@ class Requirements(BaseModel):
             "AFL/ENC unit",
             choices=TolType.group_choices("AFL/ENC"),
             max_length=1,
-            default=TolType.EMPTY
+            default=TolType.EMPTY,
+            blank=True,
+            null=True
         )
 
     is_active = models.BooleanField("active_tolerance", default=False)

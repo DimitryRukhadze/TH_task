@@ -176,7 +176,7 @@ def create_requirements(task_id: int, payload: ReqIn) -> Requirements:
     validate_task_exists(task_id)
     task = Task.objects.get(pk=task_id)
 
-    if payload.is_active:
+    if payload.is_active and task.curr_requirements:
         act_reqs = task.curr_requirements
         act_reqs.is_active = False
         act_reqs.save()
@@ -186,15 +186,15 @@ def create_requirements(task_id: int, payload: ReqIn) -> Requirements:
         mos_unit=payload.mos_unit,
         hrs_unit=payload.hrs_unit,
         afl_unit=payload.afl_unit,
-        due_months=payload.due_months or 0,
-        due_hrs=payload.due_hrs or 0,
-        due_cycles=payload.due_cycles or 0,
-        pos_tol_mos=payload.pos_tol_mos,
-        neg_tol_mos=payload.neg_tol_mos,
-        pos_tol_hrs=payload.pos_tol_hrs,
-        neg_tol_hrs=payload.neg_tol_hrs,
-        pos_tol_afl=payload.pos_tol_afl,
-        neg_tol_afl=payload.neg_tol_afl,
+        due_months=payload.due_months,
+        due_hrs=round(payload.due_hrs, 2) if payload.due_hrs else payload.due_hrs,
+        due_cycles=round(payload.due_cycles, 2) if payload.due_hrs else payload.due_hrs,
+        pos_tol_mos=round(payload.pos_tol_mos, 2) if payload.pos_tol_mos else payload.pos_tol_mos,
+        neg_tol_mos=round(payload.neg_tol_mos, 2) if payload.neg_tol_mos else payload.neg_tol_mos,
+        pos_tol_hrs=round(payload.pos_tol_hrs, 2) if payload.pos_tol_hrs else payload.pos_tol_hrs,
+        neg_tol_hrs=round(payload.neg_tol_hrs, 2) if payload.neg_tol_hrs else payload.neg_tol_hrs,
+        pos_tol_afl=round(payload.pos_tol_afl, 2) if payload.pos_tol_afl else payload.pos_tol_afl,
+        neg_tol_afl=round(payload.neg_tol_afl, 2) if payload.neg_tol_afl else payload.neg_tol_afl,
         is_active=payload.is_active
     )
 

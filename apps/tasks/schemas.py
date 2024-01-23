@@ -46,9 +46,9 @@ class ComplianceIn(Schema):
 
 class ReqIn(Schema):
     task: TaskOut | None = None
-    mos_unit: str = None
-    hrs_unit: str = None
-    afl_unit: str = None
+    mos_unit: str | None = None
+    hrs_unit: str | None = None
+    afl_unit: str | None = None
     due_months: int | None = None
     due_hrs: float | None = None
     due_cycles: float | None = None
@@ -64,9 +64,9 @@ class ReqIn(Schema):
 class ReqOut(Schema):
     pk: int
     task: TaskOut
-    mos_unit: str
-    hrs_unit: str
-    afl_unit: str
+    mos_unit: str | None = None
+    hrs_unit: str | None = None
+    afl_unit: str | None = None
     due_months: int | None
     due_hrs: float | None
     due_cycles: float | None

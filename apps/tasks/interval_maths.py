@@ -9,6 +9,9 @@ def cnt_next_due(task_id: int) -> None:
     task = Task.objects.get(pk=task_id)
     active_requirements = task.curr_requirements
 
+    if not active_requirements:
+        return
+
     if not active_requirements.due_months and not active_requirements.due_hrs and not active_requirements.due_cycles:
         return
 
