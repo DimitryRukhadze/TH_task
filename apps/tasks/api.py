@@ -3,7 +3,15 @@ from ninja.pagination import paginate
 
 from django.core.exceptions import ValidationError
 
-from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut, Error
+from .schemas import (
+    TaskIn,
+    TaskOut,
+    ComplianceIn,
+    ComplianceOut,
+    ReqIn,
+    ReqOut,
+    Error
+)
 from .services import (
     get_tasks,
     get_task,
@@ -13,8 +21,11 @@ from .services import (
     create_cw,
     get_cws,
     delete_cw,
-    update_cw
-    )
+    update_cw,
+    get_task_reqs,
+    create_requirements,
+    update_requirements
+)
 
 
 router = Router()
@@ -87,3 +98,29 @@ def api_update_cw(request, cw_id, payload: ComplianceIn):
     except ValidationError as err:
         return 400, {"message": err.message}
     return cw
+
+
+@router.get("{task_id}/requirements/", response=list[ReqOut])
+def api_get_requirements(request, task_id: int):
+    return get_task_reqs(task_id)
+
+
+@router.post("{task_id}/requirements/", response={200: ReqOut, 400: Error})
+def api_create_requirements(request, task_id, payload: ReqIn):
+    try:
+        req = create_requirements(task_id, payload)
+    except ValidationError as err:
+        return 400, {"message": err.message}
+    return req
+
+
+@router.put(
+        "{task_id}/requirements/{req_id}",
+        response={200: ReqOut, 400: Error}
+    )
+def api_update_requirements(request, task_id, req_id, payload: ReqIn):
+    try:
+        req = update_requirements(task_id, req_id, payload)
+    except ValidationError as err:
+        return 400, {"message": err.message}
+    return req

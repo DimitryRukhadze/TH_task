@@ -79,7 +79,9 @@ class CW(BaseModel):
         )
     perform_cycles = models.FloatField(
             "Perform cycles",
-            default=0
+            default=0,
+            blank=True,
+            null=True
         )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
     next_due_hrs = models.FloatField("Next due hours", blank=True, null=True)
