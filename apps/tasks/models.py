@@ -73,7 +73,9 @@ class CW(BaseModel):
         )
     perform_hours = models.FloatField(
             "Perform hours",
-            default=0
+            default=0,
+            blank=True,
+            null=True
         )
     perform_cycles = models.FloatField(
             "Perform cycles",
@@ -88,6 +90,7 @@ class CW(BaseModel):
         )
     adjusted_days = models.IntegerField("Adjustment mos", default=0)
     adjusted_hrs = models.FloatField("Adjustment hrs", default=0)
+    adjusted_cycles = models.FloatField("Adjustment cycles", default=0)
 
     class Meta:
         unique_together = ("task", "perform_date")

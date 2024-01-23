@@ -11,8 +11,10 @@ from .interval_maths import (
     check_adjustment,
     count_mos_adjustment,
     count_hrs_adjustment,
+    count_afl_adjustment,
     get_mos_span,
-    get_hrs_span
+    get_hrs_span,
+    get_afl_span
 )
 
 
@@ -57,15 +59,15 @@ def get_task_requirements(task_pk: int, payload: dict) -> dict:
         req['hrs_pos'] = tol_pos_hrs
         req['hrs_neg'] = tol_neg_hrs
 
-#    if active_req.afl_unit != "Empty":
-#        tol_neg_mos, tol_pos_mos = get_afl_span(task)
-#        if not tol_neg_mos and tol_pos_mos:
-#            tol_neg_mos = payload['perform_date']
-#        if not tol_pos_mos and tol_neg_mos:
-#            tol_pos_mos = payload['perform_date']
-#
-#        req['afl_pos'] = tol_pos_mos
-#        req['afl_neg'] = tol_neg_mos
+    if active_req.afl_unit != "Empty":
+        tol_neg_afl, tol_pos_afl = get_afl_span(task)
+        if not tol_neg_afl and tol_pos_afl:
+            tol_neg_afl = payload['perform_cycles']
+        if not tol_pos_afl and tol_neg_afl:
+            tol_pos_afl = payload['perform_cycles']
+
+        req['afl_pos'] = tol_pos_afl
+        req['afl_neg'] = tol_neg_afl
 
         return req
 
@@ -124,6 +126,9 @@ def create_cw(task_pk: int, payload: dict) -> CW:
         if active_req.hrs_unit != 'E' and (req['hrs_neg'] <= payload['perform_hours'] <= req['hrs_pos']):
             adj["adjusted_hrs"] = count_hrs_adjustment(task, payload)
 
+        if active_req.afl_unit != 'E' and (req['afl_neg'] <= payload['perform_cycles'] <= req['afl_pos']):
+            adj["adjusted_cycles"] = count_afl_adjustment(task, payload)
+
         payload.update(adj)
 
     payload.update(task=task)
@@ -160,3 +165,19 @@ def update_cw(cw_pk: int, payload: dict) -> CW:
     update_next_due_date.delay(cw.task.pk)
 
     return cw
+
+
+def create_requirements():
+    pass
+
+
+def get_requirements():
+    pass
+
+
+def update_requirements():
+    pass
+
+
+def delete_requirements():
+    pass

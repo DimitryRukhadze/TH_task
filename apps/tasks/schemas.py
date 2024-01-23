@@ -29,8 +29,10 @@ class ComplianceOut(Schema):
     task: TaskOut
     perform_date: date
     perform_hours: float | None = None
+    perform_cycles: float | None = None
     next_due_date: date | None = None
     next_due_hrs: float | None = None
+    next_due_cycles: float | None = None
 
 
 class ComplianceIn(Schema):
@@ -38,6 +40,8 @@ class ComplianceIn(Schema):
     next_due_date: date | None = None
     perform_hours: float | None = None
     next_due_hrs: float | None = None
+    perform_cycles: float | None = None
+    next_due_cycles: float | None = None
 
 
 class Error(Schema):
