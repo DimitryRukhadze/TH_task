@@ -136,6 +136,10 @@ def create_req(task_pk: int, payload: Schema) -> Requirements:
         tol_mos_unit=payload.tol_mos_unit,
         is_active=payload.is_active
     )
+    if task.curr_requirements and payload.is_active:
+        curr_req = task.curr_requirements
+        curr_req.is_active = False
+        curr_req.save()
 
     req.save()
     if task.compliance:

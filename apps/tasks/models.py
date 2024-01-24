@@ -75,14 +75,14 @@ class Task(BaseModel):
     @property
     def compliance(self) -> object | None:
         try:
-            return self.compliances.latest("perform_date")
+            return self.compliances.active().latest("perform_date")
         except CW.DoesNotExist:
             return None
 
     @property
     def curr_requirements(self) -> object | None:
         try:
-            return self.requirements.latest("is_active")
+            return self.requirements.active().filter(is_active=True).first()
         except Requirements.DoesNotExist:
             return None
 
