@@ -116,26 +116,28 @@ class Requirements(BaseModel):
 
     due_months = models.DecimalField(
         "Due_months",
-        max_digits=4,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True
     )
     due_months_unit = models.CharField(
         max_length=1,
-        choices=TolType.group_choices("DUE_UNIT")
+        choices=TolType.group_choices("DUE_UNIT"),
+        blank=True,
+        null=True
     )
 
     tol_pos_mos = models.DecimalField(
         "MOS positive",
-        max_digits=4,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True
     )
     tol_neg_mos = models.DecimalField(
         "MOS negative",
-        max_digits=4,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True
