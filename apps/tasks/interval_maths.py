@@ -2,30 +2,23 @@ from math import ceil, floor
 from dateutil.relativedelta import relativedelta
 from datetime import date
 
-from .models import Task, CW, Requirements
+from .models import Task, CW, Requirements, BaseModel
 
 
 def cnt_next_due(task_id: int) -> None:
-    task = Task.objects.get(pk=task_id)
-    if not task.due_months:
-        return
-    cw = task.compliance
+    task = BaseModel.get_object_or_404(Task, pk=task_id)
+    curr_req = task.curr_requirements
+    latest_cw = task.compliance
 
-    if cw:
-        if cw.adjusted_days:
-            prev_cw = CW.objects.active().filter(
-                    task=task
-                ).order_by('-perform_date')[1]
+    if task.curr_requirements and task.compliance:
+        if curr_req.due_months_unit == 'M':
+            months = curr_req.due_months
+            latest_cw.next_due_date = latest_cw.perform_date + relativedelta(months=months)
+        if curr_req.due_months_unit == 'D':
+            days = curr_req.due_months
+            latest_cw.next_due_date = latest_cw.perform_date + relativedelta(days=days)
 
-            cw.next_due_date = prev_cw.next_due_date + relativedelta(
-                    months=task.due_months
-                )
-        else:
-            cw.next_due_date = cw.perform_date + relativedelta(
-                    months=task.due_months
-                )
-
-        cw.save()
+        latest_cw.save()
 
 
 def check_adjustment(task: Task, perform_date) -> bool:
@@ -34,11 +27,6 @@ def check_adjustment(task: Task, perform_date) -> bool:
     if latest_cw and latest_cw.next_due_date:
         return latest_cw.next_due_date != perform_date
     return False
-
-
-def count_adjustment(task: Task, perf_date):
-    delta = perf_date - task.compliance.next_due_date
-    return delta.days
 
 
 def cnt_tol_span_days(tol: Requirements, late_cw: CW) -> tuple:

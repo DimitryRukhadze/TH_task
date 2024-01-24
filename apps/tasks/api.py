@@ -3,7 +3,15 @@ from ninja.pagination import paginate
 
 from django.core.exceptions import ValidationError
 
-from .schemas import TaskIn, TaskOut, ComplianceIn, ComplianceOut, Error
+from .schemas import (
+    TaskIn,
+    TaskOut,
+    ComplianceIn,
+    ComplianceOut,
+    ReqIn,
+    ReqOut,
+    Error
+    )
 from .services import (
     get_tasks,
     get_task,
@@ -13,7 +21,8 @@ from .services import (
     create_cw,
     get_cws,
     delete_cw,
-    update_cw
+    update_cw,
+    create_req
     )
 
 
@@ -89,16 +98,16 @@ def api_update_cw(request, cw_id, payload: ComplianceIn):
     return cw
 
 
-# @router.post(
-#    "{task_id}/requirements/",
-#    response={
-#        200: ReqOut,
-#        400: Error
-#    }
-# )
-# def api_create_req(request, task_id):
-#    try:
-#        new_req = create_req(task_id)
-#    except ValidationError as err:
-#        return 400, {"message": err.message}
-#    return new_req
+@router.post(
+        "{task_id}/requirements/",
+        response={
+            200: ReqOut,
+            400: Error
+        }
+    )
+def api_create_req(request, task_id, payload: ReqIn):
+    try:
+        new_req = create_req(task_id, payload)
+    except ValidationError as err:
+        return 400, {"message": err.message}
+    return new_req

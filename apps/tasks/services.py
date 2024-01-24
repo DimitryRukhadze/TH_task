@@ -25,6 +25,25 @@ def validate_task_exists(task_pk: int) -> bool:
     return Task.objects.active().filter(pk=task_pk).exists()
 
 
+def validate_dues(payload: Schema) -> bool:
+    if not payload.due_months:
+        raise ValidationError(
+            "Can not create Requirements without dues"
+        )
+    if not payload.due_months_unit:
+        raise ValidationError(
+            "Can not create due months without unit"
+        )
+
+
+def validate_tol_units(payload: Schema):
+    if payload.tol_pos_mos or payload.tol_neg_mos:
+        if not payload.tol_mos_unit:
+            raise ValidationError(
+                'No unit for tolerances'
+            )
+
+
 def get_tasks() -> QuerySet:
     return Task.objects.active().order_by("code", "description")
 
@@ -51,8 +70,6 @@ def update_tasks(task_pk: int, payload: dict) -> Task:
 
     update_obj.save()
 
-    update_next_due_date.delay(task_pk)
-
     return update_obj
 
 
@@ -73,7 +90,7 @@ def create_cw(task_pk: int, payload: dict) -> CW:
     cw = CW.objects.create(**payload)
     cw.save()
 
-    update_next_due_date.delay(task_pk)
+    update_next_due_date.delay(task.pk)
 
     return cw
 
@@ -97,7 +114,6 @@ def update_cw(cw_pk: int, payload: dict) -> CW:
     validate_cw_perf_date(cw.task, payload['perform_date'])
 
     cw.perform_date = payload['perform_date']
-
     cw.save()
 
     update_next_due_date.delay(cw.task.pk)
@@ -106,4 +122,23 @@ def update_cw(cw_pk: int, payload: dict) -> CW:
 
 
 def create_req(task_pk: int, payload: Schema) -> Requirements:
-    pass
+
+    validate_task_exists(task_pk)
+    validate_dues(payload)
+    validate_tol_units(payload)
+    task = BaseModel.get_object_or_404(Task, pk=task_pk)
+    req = Requirements.objects.create(
+        task=task,
+        due_months=payload.due_months,
+        due_months_unit=payload.due_months_unit,
+        tol_pos_mos=payload.tol_pos_mos,
+        tol_neg_mos=payload.tol_neg_mos,
+        tol_mos_unit=payload.tol_mos_unit,
+        is_active=payload.is_active
+    )
+
+    req.save()
+    if task.compliance:
+        update_next_due_date.delay(task.pk)
+
+    return req

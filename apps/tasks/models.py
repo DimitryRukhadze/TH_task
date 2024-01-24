@@ -97,7 +97,7 @@ class CW(BaseModel):
         "Perform date",
         )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
-    adj_mos = models.IntegerField("Adjustment")
+    adj_mos = models.IntegerField("Adjustment", blank=True, null=True)
 
     class Meta:
         unique_together = ("task", "perform_date")
@@ -141,10 +141,12 @@ class Requirements(BaseModel):
         null=True
     )
     tol_mos_unit = models.CharField(
-            "MOS unit",
-            choices=TolType.group_choices("MOS_UNIT"),
-            max_length=1,
-        )
+        "MOS unit",
+        choices=TolType.group_choices("MOS_UNIT"),
+        max_length=1,
+        blank=True,
+        null=True
+    )
 
     is_active = models.BooleanField("active_tolerance")
 
