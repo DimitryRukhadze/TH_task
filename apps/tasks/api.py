@@ -22,7 +22,9 @@ from .services import (
     get_cws,
     delete_cw,
     update_cw,
-    create_req
+    create_req,
+    get_req,
+    delete_req
     )
 
 
@@ -111,3 +113,35 @@ def api_create_req(request, task_id, payload: ReqIn):
     except ValidationError as err:
         return 400, {"message": err.message}
     return new_req
+
+
+@router.get(
+        "{task_id}/requirements/{req_id}/",
+        response={200: ReqOut, 400: Error}
+    )
+def api_get_req(request, task_id: int, req_id: int):
+    try:
+        req = get_req(task_id, req_id)
+    except ValidationError as err:
+        return 400, {"message": err.message}
+    return req
+
+
+@router.put(
+        "{task_id}/requirements/{req_id}",
+        response={200: ReqOut, 400: Error}
+    )
+def api_update_req(request, task_id, req_id):
+    pass
+
+
+@router.delete(
+        "{task_id}/requirements/{req_id}",
+        response={200: ReqOut, 400: Error}
+    )
+def api_delete_req(request, task_id, req_id):
+    try:
+        req = delete_req(task_id, req_id)
+    except ValidationError as err:
+        return 400, {"message": err.message}
+    return 200, req

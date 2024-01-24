@@ -46,7 +46,7 @@ class TaskAdmin(admin.ModelAdmin):
 
         url = (
             reverse(
-                    "admin:tasks_tolerance_change",
+                    "admin:tasks_requirements_change",
                     args=(active_requirements.pk, )
                 )
             + "?"

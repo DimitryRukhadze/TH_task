@@ -30,7 +30,7 @@ class ReqIn(Schema):
     due_months_unit: str | None = None
     tol_pos_mos: float | None = None
     tol_neg_mos: float | None = None
-    tol_mos_unit: float | None = None
+    tol_mos_unit: str | None = None
 
 
 class ReqOut(Schema):
@@ -40,7 +40,7 @@ class ReqOut(Schema):
     due_months_unit: str | None = None
     tol_pos_mos: float | None = None
     tol_neg_mos: float | None = None
-    tol_mos_unit: float | None = None
+    tol_mos_unit: str | None = None
 
 
 class Error(Schema):

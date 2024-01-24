@@ -22,7 +22,10 @@ def validate_cw_perf_date(task: Task, perform_date: date) -> None:
 
 
 def validate_task_exists(task_pk: int) -> bool:
-    return Task.objects.active().filter(pk=task_pk).exists()
+    if not Task.objects.active().filter(pk=task_pk).exists():
+        raise ValidationError(
+            f"Task with pk={task_pk} does not exist"
+        )
 
 
 def validate_dues(payload: Schema) -> bool:
@@ -41,6 +44,12 @@ def validate_tol_units(payload: Schema):
         if not payload.tol_mos_unit:
             raise ValidationError(
                 'No unit for tolerances'
+            )
+
+    if payload.tol_mos_unit:
+        if not payload.tol_pos_mos and not payload.tol_neg_mos:
+            raise ValidationError(
+                "Can not create Tolerance without values"
             )
 
 
@@ -145,4 +154,21 @@ def create_req(task_pk: int, payload: Schema) -> Requirements:
     if task.compliance:
         update_next_due_date.delay(task.pk)
 
+    return req
+
+
+def get_req(task_pk: int, req_pk: int):
+    validate_task_exists(task_pk)
+    return BaseModel.get_object_or_404(Requirements, pk=req_pk)
+
+
+def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
+    pass
+
+
+def delete_req(task_pk: int, req_pk: int):
+    validate_task_exists(task_pk)
+    req = BaseModel.get_object_or_404(Requirements, pk=req_pk)
+    req.is_active = False
+    req.delete()
     return req
