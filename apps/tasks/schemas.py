@@ -36,5 +36,9 @@ class ComplianceIn(Schema):
     next_due_date: date | None = None
 
 
+class ReqOut(Schema):
+    is_active: bool
+
+
 class Error(Schema):
     message: str

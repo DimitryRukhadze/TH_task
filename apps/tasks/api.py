@@ -87,3 +87,18 @@ def api_update_cw(request, cw_id, payload: ComplianceIn):
     except ValidationError as err:
         return 400, {"message": err.message}
     return cw
+
+
+# @router.post(
+#    "{task_id}/requirements/",
+#    response={
+#        200: ReqOut,
+#        400: Error
+#    }
+# )
+# def api_create_req(request, task_id):
+#    try:
+#        new_req = create_req(task_id)
+#    except ValidationError as err:
+#        return 400, {"message": err.message}
+#    return new_req

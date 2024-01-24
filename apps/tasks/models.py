@@ -4,6 +4,31 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 
+class TolType(models.TextChoices):
+    MONTHS = 'M'
+    DAYS = 'D'
+    PERCENTS = 'P'
+
+    @classmethod
+    def group_choices(cls, group_name):
+        interval = {
+            "DUE_UNIT": {
+                cls.MONTHS: "Months",
+                cls.DAYS: "Days",
+            },
+            "MOS_UNIT": {
+                cls.MONTHS: "Months",
+                cls.DAYS: "Days",
+                cls.PERCENTS: "Percents"
+            }
+        }
+
+        return [
+            (choice, name)
+            for choice, name in interval[group_name].items()
+        ]
+
+
 class BaseQuerySet(QuerySet):
     def active(self: QuerySet) -> QuerySet:
         return self.filter(is_deleted=False)
@@ -82,29 +107,6 @@ class CW(BaseModel):
 
 
 class Requirements(BaseModel):
-    class TolType(models.TextChoices):
-        MONTHS = 'M'
-        DAYS = 'D'
-        PERCENTS = 'P'
-
-        @classmethod
-        def group_choices(cls, group_name):
-            interval = {
-                "DUE_UNIT": {
-                    cls.MONTHS: "Months",
-                    cls.DAYS: "Days",
-                },
-                "MOS_UNIT": {
-                    cls.MONTHS: "Months",
-                    cls.DAYS: "Days",
-                    cls.PERCENTS: "Percents"
-                }
-            }
-
-            return [
-                (choice, name)
-                for choice, name in interval[group_name].items()
-            ]
 
     task = models.ForeignKey(
         "Task",
@@ -144,7 +146,7 @@ class Requirements(BaseModel):
             max_length=1,
         )
 
-    is_active = models.BooleanField("active_tolerance", default=False)
+    is_active = models.BooleanField("active_tolerance")
 
     def __str__(self):
         return f"{self.task} tolerance"
