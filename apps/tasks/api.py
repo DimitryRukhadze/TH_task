@@ -129,7 +129,7 @@ def api_get_req(request, task_id: int, req_id: int):
 
 
 @router.put(
-        "{task_id}/requirements/{req_id}",
+        "{task_id}/requirements/{req_id}/",
         response={200: ReqOut, 400: Error}
     )
 def api_update_req(request, task_id, req_id, payload: ReqIn):
@@ -141,7 +141,7 @@ def api_update_req(request, task_id, req_id, payload: ReqIn):
 
 
 @router.delete(
-        "{task_id}/requirements/{req_id}",
+        "{task_id}/requirements/{req_id}/",
         response={200: ReqOut, 400: Error}
     )
 def api_delete_req(request, task_id, req_id):

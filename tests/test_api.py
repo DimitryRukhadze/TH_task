@@ -1,17 +1,18 @@
 import pytest
 import json
-import datetime
+from copy import deepcopy
+from datetime import datetime
 
 from django.utils import timezone
 
-from apps.tasks.models import Task, CW
+from apps.tasks.models import Task, Requirements, CW
 
 
 CORRECT_TASK_PAYLOAD = [
     {"code": "00-IJM-001", "description": "long_str"},
-    {"code": "112219-MRIP-MRBR", "description": "long_str", "due_months": 0},
-    {"code": "AC76-160609", "description": "long_str", "due_months": 6},
-    {"code": "AC76-170424", "description": "long_str", "due_months": 0}
+    {"code": "112219-MRIP-MRBR", "description": ""},
+    {"code": "AC76-160609", "description": "long_str"},
+    {"code": "AC76-170424", "description": "long_str"}
 ]
 
 
@@ -237,181 +238,264 @@ def test_create_cw_for_task(client, num, result):
 
 
 @pytest.mark.parametrize(
-        'due_months,perf_date,res_date',
-        [
-            (6, '2023-12-01', '2024-06-01'),
-            (5, '2023-12-01', '2024-05-01'),
-            (4, '2023-12-01', '2024-04-01'),
-        ]
-)
-@pytest.mark.django_db
-def test_due_date_count_for_cw_create(client, due_months, perf_date, res_date):
-
-    task = Task.objects.create(
-        code='00-IJM-001',
-        description='long_str',
-        due_months=due_months
-    )
-
-    cw_payload = {
-        "task": task.pk,
-        "perform_date": perf_date
-    }
-    response = client.post(
-        f'/api/tasks/{task.pk}/cws/',
-        json.dumps(cw_payload),
-        content_type='application/json'
-    )
-
-    assert response.status_code == 200
-    assert json.loads(response.content)['next_due_date'] == res_date
-
-
-@pytest.mark.parametrize(
-        'due_months,perf_date,update_date,res_date',
-        [
-            (6, '2023-12-01', '2024-01-01', '2024-07-01'),
-            (5, '2023-12-01', '2024-01-01', '2024-06-01'),
-            (4, '2023-12-01', '2024-01-01', '2024-05-01'),
-        ]
-)
-@pytest.mark.django_db
-def test_due_date_count_for_cw_update(
-        client,
-        due_months,
-        perf_date,
-        update_date,
-        res_date
-        ):
-
-    task = Task.objects.create(
-        code='00-IJM-001',
-        description='long_str',
-        due_months=due_months
-    )
-
-    cw_payload = {
-        "task": task,
-        "perform_date": perf_date
-    }
-
-    cw = CW.objects.create(**cw_payload)
-
-    update_payload = {
-        "perform_date": update_date
-    }
-
-    response = client.put(
-        f'/api/tasks/{task.pk}/cws/{cw.pk}/',
-        json.dumps(update_payload),
-        content_type='application/json'
-    )
-    print(json.loads(response.content))
-
-    assert response.status_code == 200
-    assert json.loads(response.content)['next_due_date'] == res_date
-
-
-@pytest.mark.django_db
-def test_get_cws_for_task(client):
-    today = timezone.now().date()
-    yesterday = today - timezone.timedelta(days=1)
-
-    task = Task.objects.create(code='00-IJM-001', description='long_str')
-    today_cws_payload = {'task': task, 'perform_date': today}
-    past_cws_payload = {'task': task, 'perform_date': yesterday}
-
-    bulk_cws_payload = [today_cws_payload, past_cws_payload]
-
-    cws = [CW(**fields) for fields in bulk_cws_payload]
-
-    CW.objects.bulk_create(cws)
-
-    response = client.get(f'/api/tasks/{task.pk}/cws/')
-    assert response.status_code == 200
-
-    for obj_repr in json.loads(response.content)["items"]:
-        assert obj_repr["task"]["pk"] == task.pk
-
-
-@pytest.mark.django_db
-def test_delete_cws(client):
-    today = timezone.now().date()
-    yesterday = today - timezone.timedelta(days=1)
-    another_prev_date = today - timezone.timedelta(days=10)
-
-    task = Task.objects.create(code='00-IJM-001', description='long_str')
-    today_cws_payload = {'task': task, 'perform_date': today}
-    past_cws_payload = {'task': task, 'perform_date': yesterday}
-    prev_cws_payload = {'task': task, 'perform_date': another_prev_date}
-
-    bulk_cws_payload = [today_cws_payload, past_cws_payload, prev_cws_payload]
-    cws = [CW(**fields) for fields in bulk_cws_payload]
-
-    CW.objects.bulk_create(cws)
-
-    for cw in cws:
-        response = client.delete(f'/api/tasks/{task.pk}/cws/{cw.pk}/')
-        assert response.status_code == 200
-        response = client.delete(f'/api/tasks/{task.pk}/cws/{cw.pk}/')
-        assert response.status_code == 404
-
-
-@pytest.mark.parametrize(
-    'num,result',
+    'task,payload,result',
     [
-        (0, 400),
-        (-1, 200),
-        (1, 400)
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M"}, 200),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "tol_pos_mos": 12}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "tol_pos_mos": 12, "tol_mos_unit": "D"}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_pos_mos": 12, "tol_mos_unit": "D"}, 200),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_pos_mos": 12}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_mos_unit": "D"}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_pos_mos": 12, "tol_neg_mos": 12, "tol_mos_unit": "D"}, 200),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_pos_mos": 12, "tol_neg_mos": 12}, 400),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_neg_mos": 12, "tol_mos_unit": "D"}, 200),
+        (Task(code='00-IJM-001', description='long_str'), {"is_active": True, "due_months": 6, "due_months_unit": "M", "tol_neg_mos": 12}, 400),
     ]
 )
 @pytest.mark.django_db
-def test_update_cw(client, num, result):
-    init_cw_date = datetime.date(2023, 12, 12)
+def test_create_requirements(client, task, payload, result):
+    task = task
+    task.save()
+    curr_payload = deepcopy(payload)
+    curr_payload["task"] = task.pk
 
-    task = Task.objects.create(code='00-IJM-001', description='long_str')
-    today_cws_attrs = {
-        "task": task,
-        "perform_date": init_cw_date
-        }
-
-    cw = CW.objects.create(**today_cws_attrs)
-
-    update_payload = {
-        'perform_date': (
-            cw.perform_date - timezone.timedelta(days=num)
-            ).strftime("%Y-%m-%d")
-        }
-
-    response = client.put(
-        f'/api/tasks/{task.pk}/cws/{cw.pk}/',
-        json.dumps(update_payload),
+    response = client.post(
+        f'/api/tasks/{task.pk}/requirements/',
+        json.dumps(curr_payload),
         content_type='application/json'
     )
 
     assert response.status_code == result
-    updated_cw = json.loads(response.content)
+
     if response.status_code == 200:
-        assert updated_cw['perform_date'] == update_payload['perform_date']
+        resp_dict = json.loads(response.content)
+        curr_payload["pk"] = curr_payload["task"]
+        curr_payload.pop("task")
+        for key, value in resp_dict.items():
+            if key in curr_payload:
+                assert curr_payload[key] == value
 
 
+@pytest.mark.parametrize(
+    'task,requirement_1,requirement_2,payload,result',
+    [
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": True},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": False, "due_months": 5},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": False, "due_months_unit": "M"},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": True, "tol_pos_mos": 12},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": False, "tol_pos_mos": 12, "tol_mos_unit": "D"},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": False, "due_months_unit": "M", "tol_pos_mos": 12},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": True, "due_months_unit": "M", "tol_mos_unit": "D"},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": True, "due_months_unit": "M", "tol_pos_mos": 12, "tol_neg_mos": 12, "tol_mos_unit": "D"},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": False, "due_months_unit": "M", "tol_pos_mos": 12, "tol_neg_mos": 12},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": False, "due_months_unit": "M", "tol_neg_mos": 12, "tol_mos_unit": "D"},
+            200
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            {"is_active": True, "due_months_unit": "M", "tol_neg_mos": 12},
+            200
+            ),
+    ]
+)
 @pytest.mark.django_db
-def test_get_tasks_with_next_due_date():
-    today = timezone.now().date()
-    next_due_date = datetime.date(2023, 12, 12)
+def test_update_requirements(client, task, requirement_1, requirement_2, payload, result):
+    task = task
+    task.save()
 
-    task = Task.objects.create(code='00-IJM-001', description='long_str')
-    cw_payload = {
-            "task": task,
-            "perform_date": today,
-            "next_due_date": next_due_date
-        }
+    req_1 = requirement_1
+    req_1.task = task
 
-    cw = CW.objects.create(**cw_payload)
+    if payload.get("is_active"):
+        req_1.is_active = True
+    req_1.save()
 
-    assert cw.next_due_date == cw_payload["next_due_date"]
+    req_2 = requirement_2
+    req_2.task = task
+    req_2.save()
 
-    cw.next_due_date = None
-    cw.save()
+    response_2 = client.put(
+        f'/api/tasks/{task.pk}/requirements/{req_2.pk}/',
+        json.dumps(payload),
+        content_type='application/json'
+    )
+    response_1 = client.get(
+        f'/api/tasks/{task.pk}/requirements/{req_1.pk}/'
+    )
+    assert response_2.status_code == result
 
-    assert not cw.next_due_date
+    updated_contents_1 = json.loads(response_1.content)
+    updated_contents_2 = json.loads(response_2.content)
+
+    for key, value in payload.items():
+        if updated_contents_2.get(key) and updated_contents_1.get(key):
+            assert value == updated_contents_2[key]
+            assert not updated_contents_2[key] == updated_contents_1[key]
+            assert not value == updated_contents_1[key]
+
+
+@pytest.mark.parametrize(
+    'task,requirement,result_1,result_2',
+    [
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            200,
+            404
+            ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='D'),
+            200,
+            404
+            ),
+    ]
+)
+@pytest.mark.django_db
+def test_delete_requirements(client, task, requirement, result_1, result_2):
+    task = task
+    task.save()
+
+    req = requirement
+    req.task = task
+    req.save()
+
+    response = client.delete(f"/api/tasks/{task.pk}/requirements/{req.pk}/")
+    assert response.status_code == result_1
+    deleted_req = Requirements.objects.get(pk=req.pk)
+    assert not deleted_req.is_active
+    assert deleted_req.is_deleted
+
+    response = client.delete(f"/api/tasks/{task.pk}/requirements/{req.pk}/")
+    assert response.status_code == result_2
+    deleted_req = Requirements.objects.get(pk=req.pk)
+    assert not deleted_req.is_active
+    assert deleted_req.is_deleted
+
+
+@pytest.mark.parametrize(
+    "task,requirement,cw_1,cw_2,expected_ndd",
+    [
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='M'),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            None,
+            datetime.strptime("2019-07-01")
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='M'),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            CW(perform_date=datetime.strptime("2019-07-01")),
+            datetime.strptime("2020-01-01")
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='M'),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            CW(perform_date=datetime.strptime("2019-07-01")),
+            None
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='D'),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            None,
+            datetime.strptime("2019-01-07")
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='D'),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            CW(perform_date=datetime.strptime("2019-01-07")),
+            datetime.strptime("2019-01-14")
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=False, due_months=6, due_months_unit='D'),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            CW(perform_date=datetime.strptime("2019-07-01")),
+            None
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=12, tol_neg_mos=12, tol_mos_unit=D),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            CW(perform_date=datetime.strptime("2019-07-07")),
+            datetime.strptime("2020-01-01")
+        ),
+        (
+            Task(code='00-IJM-001', description='long_str'),
+            Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=12, tol_neg_mos=12, tol_mos_unit=D),
+            CW(perform_date=datetime.strptime("2019-01-01")),
+            CW(perform_date=datetime.strptime("2019-06-")),
+            datetime.strptime("2020-01-01")
+        ),
+    ]
+)
+@pytest.mark.django_db
+def test_cnt_next_due():
+    pass

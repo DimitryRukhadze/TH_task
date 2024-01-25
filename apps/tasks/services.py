@@ -168,12 +168,11 @@ def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
     task = BaseModel.get_object_or_404(Task, pk=task_pk)
     req = BaseModel.get_object_or_404(Requirements, pk=req_pk)
 
-    if not req.is_active and payload.is_active:
+    if req.is_active is False and payload.is_active:
         curr_req = task.curr_requirements
         if curr_req:
             curr_req.is_active = False
             curr_req.save()
-
     update_attrs = payload.dict()
 
     for name, value in update_attrs.items():
