@@ -114,10 +114,8 @@ class Requirements(BaseModel):
         related_name="requirements"
     )
 
-    due_months = models.DecimalField(
+    due_months = models.IntegerField(
         "Due_months",
-        max_digits=7,
-        decimal_places=2,
         blank=True,
         null=True
     )
