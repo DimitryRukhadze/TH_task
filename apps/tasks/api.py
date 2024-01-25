@@ -23,6 +23,7 @@ from .services import (
     delete_cw,
     update_cw,
     create_req,
+    update_req,
     get_req,
     delete_req
     )
@@ -112,7 +113,7 @@ def api_create_req(request, task_id, payload: ReqIn):
         new_req = create_req(task_id, payload)
     except ValidationError as err:
         return 400, {"message": err.message}
-    return new_req
+    return 200, new_req
 
 
 @router.get(
@@ -124,15 +125,19 @@ def api_get_req(request, task_id: int, req_id: int):
         req = get_req(task_id, req_id)
     except ValidationError as err:
         return 400, {"message": err.message}
-    return req
+    return 200, req
 
 
 @router.put(
         "{task_id}/requirements/{req_id}",
         response={200: ReqOut, 400: Error}
     )
-def api_update_req(request, task_id, req_id):
-    pass
+def api_update_req(request, task_id, req_id, payload: ReqIn):
+    try:
+        req = update_req(task_id, req_id, payload)
+    except ValidationError as err:
+        return 400, {"message": err.message}
+    return 200, req
 
 
 @router.delete(

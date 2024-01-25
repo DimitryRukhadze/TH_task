@@ -163,7 +163,32 @@ def get_req(task_pk: int, req_pk: int):
 
 
 def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
-    pass
+    validate_task_exists(task_pk)
+
+    task = BaseModel.get_object_or_404(Task, pk=task_pk)
+    req = BaseModel.get_object_or_404(Requirements, pk=req_pk)
+
+    if not req.is_active and payload.is_active:
+        curr_req = task.curr_requirements
+        if curr_req:
+            curr_req.is_active = False
+            curr_req.save()
+
+    update_attrs = payload.dict()
+
+    for name, value in update_attrs.items():
+        setattr(req, name, value)
+
+    if req.due_months and not req.due_months_unit:
+        req.due_months = None
+
+    if (req.tol_pos_mos or req.tol_neg_mos) and not req.tol_mos_unit:
+        req.tol_pos_mos = None
+        req.tol_neg_mos = None
+
+    req.save()
+
+    return req
 
 
 def delete_req(task_pk: int, req_pk: int):

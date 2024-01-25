@@ -2,12 +2,6 @@ from datetime import date
 from ninja import Schema
 
 
-class TaskOut(Schema):
-    pk: int
-    code: str
-    description: str
-
-
 class TaskIn(Schema):
     code: str
     description: str
@@ -41,6 +35,14 @@ class ReqOut(Schema):
     tol_pos_mos: float | None = None
     tol_neg_mos: float | None = None
     tol_mos_unit: str | None = None
+
+
+class TaskOut(Schema):
+    pk: int
+    code: str
+    description: str
+    compliance: ComplianceOut | None
+    curr_requirements: ReqOut | None
 
 
 class Error(Schema):
