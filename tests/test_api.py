@@ -6,7 +6,7 @@ from datetime import datetime
 from django.utils import timezone
 
 from apps.tasks.models import Task, Requirements, CW
-from apps.tasks.tasks import update_next_due_date
+from apps.tasks.interval_maths import cnt_next_due
 
 
 CORRECT_TASK_PAYLOAD = [
@@ -444,14 +444,14 @@ def test_delete_requirements(client, task, requirement, result_1, result_2):
             Requirements(is_active=True, due_months=6, due_months_unit='M'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             None,
-            datetime.strptime("2019-07-01", "%Y-%m-%d")
+            "2019-07-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-07-01", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d") 
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
@@ -465,14 +465,14 @@ def test_delete_requirements(client, task, requirement, result_1, result_2):
             Requirements(is_active=True, due_months=6, due_months_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             None,
-            datetime.strptime("2019-01-07", "%Y-%m-%d")
+            "2019-01-07"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-01-07", "%Y-%m-%d")),
-            datetime.strptime("2019-01-14", "%Y-%m-%d")
+            "2019-01-13"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
@@ -486,211 +486,212 @@ def test_delete_requirements(client, task, requirement, result_1, result_2):
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=12, tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-07-13", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=12, tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-19", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-19", "%Y-%m-%d")),
-            datetime.strptime("2019-12-19", "%Y-%m-%d")
+            "2019-12-19"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-07-13", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-07-13", "%Y-%m-%d")),
-            datetime.strptime("2020-01-13", "%Y-%m-%d")
+            "2020-01-13"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-19", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=1, tol_neg_mos=1, tol_mos_unit="M"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-08-01", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=1, tol_neg_mos=1, tol_mos_unit="M"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-01", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=1, tol_mos_unit="M"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-01", "%Y-%m-%d")),
-            datetime.strptime("2019-12-01", "%Y-%m-%d")
+            "2019-12-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=1, tol_mos_unit="M"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-08-01", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_neg_mos=1, tol_mos_unit="M"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-08-01", "%Y-%m-%d")),
-            datetime.strptime("2020-02-01", "%Y-%m-%d")
+            "2020-02-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_neg_mos=1, tol_mos_unit="M"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-01", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=20.2, tol_neg_mos=20.9, tol_mos_unit="P"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-08-07", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=20.2, tol_neg_mos=20.9, tol_mos_unit="P"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-05-23", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=20.2, tol_mos_unit="P"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-01", "%Y-%m-%d")),
-            datetime.strptime("2019-12-01", "%Y-%m-%d")
+            "2019-12-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_pos_mos=20.2, tol_mos_unit="P"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-08-07", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_neg_mos=20.9, tol_mos_unit="P"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-08-01", "%Y-%m-%d")),
-            datetime.strptime("2020-02-01", "%Y-%m-%d")
+            "2020-02-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='M', tol_neg_mos=20.9, tol_mos_unit="P"),
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-05-23", "%Y-%m-%d")),
-            datetime.strptime("2020-01-01", "%Y-%m-%d")
+            "2020-01-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=30, due_months_unit='D', tol_pos_mos=12, tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-03-14", "%Y-%m-%d")),
-            datetime.strptime("2020-04-01", "%Y-%m-%d")
+            "2020-04-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_pos_mos=12, tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-02-19", "%Y-%m-%d")),
-            datetime.strptime("2020-04-01", "%Y-%m-%d")
+            "2020-04-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_pos_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-02-19", "%Y-%m-%d")),
-            datetime.strptime("2020-03-20", "%Y-%m-%d")
+            "2020-03-20"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_pos_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-03-14", "%Y-%m-%d")),
-            datetime.strptime("2020-04-01", "%Y-%m-%d")
+            "2020-04-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-02-19", "%Y-%m-%d")),
-            datetime.strptime("2020-04-01", "%Y-%m-%d")
+            "2020-04-01"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_neg_mos=12, tol_mos_unit='D'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-03-14", "%Y-%m-%d")),
-            datetime.strptime("2020-04-13", "%Y-%m-%d")
+            "2020-04-13"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=180, due_months_unit='D', tol_pos_mos=12.25, tol_neg_mos=12.25, tol_mos_unit='P'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-07-08", "%Y-%m-%d")),
-            datetime.strptime("2021-01-26", "%Y-%m-%d")
+            "2021-01-26"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_pos_mos=12.25, tol_neg_mos=12.25, tol_mos_unit='P'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-08-21", "%Y-%m-%d")),
-            datetime.strptime("2021-01-26", "%Y-%m-%d")
+            "2021-01-26"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_pos_mos=12.25, tol_mos_unit='P'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-08-21", "%Y-%m-%d")),
-            datetime.strptime("2021-01-26", "%Y-%m-%d")
+            "2021-01-26"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_pos_mos=12.25, tol_mos_unit='P'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-07-08", "%Y-%m-%d")),
-            datetime.strptime("2021-01-04", "%Y-%m-%d")
+            "2021-01-04"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_neg_mos=12.25, tol_mos_unit='P'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-08-21", "%Y-%m-%d")),
-            datetime.strptime("2021-02-17", "%Y-%m-%d")
+            "2021-02-17"
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
             Requirements(is_active=True, due_months=6, due_months_unit='D', tol_neg_mos=12.25, tol_mos_unit='P'),
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-07-08", "%Y-%m-%d")),
-            datetime.strptime("2021-01-26", "%Y-%m-%d")
+            "2021-01-26"
         ),
+
     ]
 )
 @pytest.mark.django_db
@@ -707,13 +708,17 @@ def test_cnt_next_due(client, task, requirement, cw_1, cw_2, expected_ndd):
     if cw_1:
         cw_1.task = task
         cw_1.save()
-        update_next_due_date(task.pk)
-        next_due_date = cw_1.next_due_date
+        cnt_next_due(task.pk)
+        response = client.get(f'/api/tasks/{task.pk}/cws/')
+        content = json.loads(response.content)
+        next_due_date = content['items'][-1]['next_due_date']
 
     if cw_2:
         cw_2.task = task
         cw_2.save()
-        update_next_due_date(task.pk)
-        next_due_date = cw_2.next_due_date
+        cnt_next_due(task.pk)
+        response = client.get(f'/api/tasks/{task.pk}/cws/')
+        content = json.loads(response.content)
+        next_due_date = content['items'][-1]['next_due_date']
 
     assert next_due_date == expected_ndd
