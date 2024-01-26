@@ -11,6 +11,7 @@ class ComplianceOut(Schema):
     pk: int
     perform_date: date
     next_due_date: date | None = None
+    adj_mos: int | None
 
 
 class ComplianceIn(Schema):
