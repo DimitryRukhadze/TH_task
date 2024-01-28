@@ -119,7 +119,7 @@ MATH_TESTS = [
             CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2019-06-19", "%Y-%m-%d")),
             "2020-01-01",
-            +12
+            12
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
@@ -271,7 +271,7 @@ MATH_TESTS = [
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-07-08", "%Y-%m-%d")),
             "2021-01-26",
-            20
+            22
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
@@ -279,7 +279,7 @@ MATH_TESTS = [
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-08-21", "%Y-%m-%d")),
             "2021-01-26",
-            -20
+            -22
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
@@ -287,7 +287,7 @@ MATH_TESTS = [
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-08-21", "%Y-%m-%d")),
             "2021-01-26",
-            -20
+            -22
         ),
         (
             Task(code='00-IJM-001', description='long_str'),
@@ -311,7 +311,7 @@ MATH_TESTS = [
             CW(perform_date=datetime.strptime("2020-02-01", "%Y-%m-%d")),
             CW(perform_date=datetime.strptime("2020-07-08", "%Y-%m-%d")),
             "2021-01-26",
-            20
+            22
         ),
     ]
 

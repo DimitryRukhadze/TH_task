@@ -2,6 +2,9 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
 
-date = datetime.strptime("2019-06-01", "%Y-%m-%d")
+expected_ndd = datetime.strptime("2019-01-01", "%Y-%m-%d") + relativedelta(months=6) + relativedelta(months=6)
+act_ndd = datetime.strptime("2019-06-19", "%Y-%m-%d") + relativedelta(months=6)
+print(expected_ndd, act_ndd)
 
-print((datetime.strptime("2019-07-01", "%Y-%m-%d") - date))
+delta = expected_ndd - act_ndd
+print(delta)

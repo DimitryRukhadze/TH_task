@@ -17,18 +17,14 @@ def check_adjustment(latest_cw: CW, prev_cw: CW) -> bool:
     return False
 
 
-def cnt_adjustment(latest: CW, prev: CW, req: Requirements) -> int:
+def cnt_adjustment(latest_cw, expected_perf_date) -> int:
 
-    if req.due_months_unit == "M":
-        expected_ndd = prev.next_due_date + relativedelta(months=req.due_months)
-        act_ndd = latest.perform_date + relativedelta(months=req.due_months)
+    expected_interval = latest_cw.next_due_date - expected_perf_date
+    fact_interval = latest_cw.next_due_date - latest_cw.perform_date
+    adj = fact_interval - expected_interval
 
-    if req.due_months_unit == "D":
-        expected_ndd = prev.next_due_date + relativedelta(days=req.due_months)
-        act_ndd = latest.perform_date + relativedelta(days=req.due_months)
-
-    delta = expected_ndd - act_ndd
-    return delta.days
+    latest_cw.adj_mos = adj.days
+    latest_cw.save()
 
 
 def get_mos_tol_window(mid_date: date, req: Requirements) -> tuple:
@@ -76,11 +72,12 @@ def cnt_next_due(task_id: int) -> None:
     if not curr_req or not latest_cw:
         return
 
+    adjusted = False
     count_from = latest_cw.perform_date
 
     if check_adjustment(latest_cw, prev_cw) and check_tol_window(curr_req, latest_cw, prev_cw):
         count_from = prev_cw.next_due_date
-        latest_cw.adj_mos = cnt_adjustment(latest_cw, prev_cw, curr_req)
+        adjusted = True
 
     if curr_req.due_months_unit == 'M':
         latest_cw.next_due_date = count_from + relativedelta(months=curr_req.due_months)
@@ -89,3 +86,6 @@ def cnt_next_due(task_id: int) -> None:
         latest_cw.next_due_date = count_from + relativedelta(days=curr_req.due_months)
 
     latest_cw.save()
+
+    if adjusted:
+        cnt_adjustment(latest_cw, count_from)
