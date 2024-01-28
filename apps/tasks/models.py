@@ -10,7 +10,7 @@ class TolType(models.TextChoices):
     PERCENTS = 'P'
 
     @classmethod
-    def group_choices(cls, group_name):
+    def provide_group_choices(cls, group_name):
         interval = {
             "DUE_UNIT": {
                 cls.MONTHS: "Months",
@@ -23,10 +23,20 @@ class TolType(models.TextChoices):
             }
         }
 
+        return interval[group_name]
+
+    @classmethod
+    def group_choices(cls, group_name):
+        available_choices = cls.provide_group_choices(group_name)
         return [
             (choice, name)
-            for choice, name in interval[group_name].items()
+            for choice, name in available_choices.items()
         ]
+
+    @classmethod
+    def provide_choice_types(cls, group_name):
+        available_choices = cls.provide_group_choices(group_name)
+        return available_choices.keys()
 
 
 class BaseQuerySet(QuerySet):

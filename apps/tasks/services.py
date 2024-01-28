@@ -4,9 +4,10 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from django.forms.models import model_to_dict
 from ninja import Schema
 
-from .models import Task, CW, BaseModel, Requirements
+from .models import Task, CW, BaseModel, Requirements, TolType
 from .tasks import update_next_due_date
 
 
@@ -38,6 +39,13 @@ def validate_dues(payload: Schema) -> bool:
             "Can not create due months without unit"
         )
 
+    if payload.due_months_unit not in TolType.provide_choice_types("DUE_UNIT"):
+        units = TolType.provide_choice_types("DUE_UNIT")
+        raise ValidationError(
+            f"Choices are {units}"
+#            f"No {payload.due_months_unit} due months type"
+        )
+
 
 def validate_tol_units(payload: Schema):
     if payload.tol_pos_mos or payload.tol_neg_mos:
@@ -47,10 +55,15 @@ def validate_tol_units(payload: Schema):
             )
 
     if payload.tol_mos_unit:
-        if not payload.tol_pos_mos and not payload.tol_neg_mos:
+        if payload.tol_pos_mos and not payload.tol_neg_mos:
             raise ValidationError(
                 "Can not create Tolerance without values"
             )
+
+    if payload.tol_mos_unit not in TolType.provide_choice_types("MOS_UNIT"):
+        raise ValidationError(
+            f"No {payload.tol_mos_unit} tolerance type"
+        )
 
 
 def get_tasks() -> QuerySet:
@@ -112,9 +125,10 @@ def get_cws(task_pk: int) -> QuerySet:
         ).order_by("perform_date")
 
 
-def delete_cw(cw_pk: int) -> None:
+def delete_cw(cw_pk: int, task_pk: int) -> None:
     cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
     cw.delete()
+    update_next_due_date.delay(task_pk)
 
 
 def update_cw(cw_pk: int, payload: dict) -> CW:
@@ -175,8 +189,11 @@ def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
             curr_req.save()
     update_attrs = payload.dict()
 
+    req_fields = model_to_dict(req)
+
     for name, value in update_attrs.items():
-        setattr(req, name, value)
+        if value and req_fields.get(name) != value:
+            setattr(req, name, value)
 
     if req.due_months and not req.due_months_unit:
         req.due_months = None
@@ -186,6 +203,7 @@ def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
         req.tol_neg_mos = None
 
     req.save()
+    update_next_due_date.delay(task_pk)
 
     return req
 
@@ -195,4 +213,5 @@ def delete_req(task_pk: int, req_pk: int):
     req = BaseModel.get_object_or_404(Requirements, pk=req_pk)
     req.is_active = False
     req.delete()
+    update_next_due_date.delay(task_pk)
     return req

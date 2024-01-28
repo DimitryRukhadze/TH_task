@@ -82,8 +82,8 @@ def api_get_cws(request, task_id: int):
 
 
 @router.delete("{task_id}/cws/{cw_id}/")
-def api_delete_cw(request, cw_id):
-    return delete_cw(cw_id)
+def api_delete_cw(request, cw_id, task_id):
+    return delete_cw(cw_id, task_id)
 
 
 @router.put(
