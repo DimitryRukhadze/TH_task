@@ -1,5 +1,6 @@
 from datetime import date
 from ninja import Schema
+from typing import Optional
 
 
 class TaskIn(Schema):
@@ -42,8 +43,20 @@ class TaskOut(Schema):
     pk: int
     code: str
     description: str
-    compliance: ComplianceOut | None
+    compliance: Optional[ComplianceOut] | None
+    all_compliances: Optional[list[ComplianceOut]] = None
+    all_requirements: Optional[list[ReqOut]] = None
     curr_requirements: ReqOut | None
+
+    @staticmethod
+    def resolve_compliance(obj):
+        if obj.all_compliances:
+            return
+
+    @staticmethod
+    def resolve_curr_requirements(obj):
+        if obj.all_requirements:
+            return
 
 
 class Error(Schema):

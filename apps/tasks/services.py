@@ -40,10 +40,8 @@ def validate_dues(payload: Schema) -> bool:
         )
 
     if payload.due_months_unit not in TolType.provide_choice_types("DUE_UNIT"):
-        units = TolType.provide_choice_types("DUE_UNIT")
         raise ValidationError(
-            f"Choices are {units}"
-#            f"No {payload.due_months_unit} due months type"
+            f"No {payload.due_months_unit} due months type"
         )
 
 
@@ -51,7 +49,7 @@ def validate_tol_units(payload: Schema):
     if payload.tol_pos_mos or payload.tol_neg_mos:
         if not payload.tol_mos_unit:
             raise ValidationError(
-                'No unit for tolerances'
+                'No unit  for tolerances'
             )
 
     if payload.tol_mos_unit:
@@ -71,7 +69,10 @@ def get_tasks() -> QuerySet:
 
 
 def get_task(task_pk: int) -> Task | None:
-    return get_object_or_404(Task, pk=task_pk)
+    task = get_object_or_404(Task, pk=task_pk)
+    task.all_compliances = CW.objects.active().filter(task=task).order_by('perform_date')
+    task.all_requirements = Requirements.objects.active().filter(task=task).order_by('created_at')
+    return task
 
 
 def create_tasks(payload: list[dict]) -> list[Task]:
