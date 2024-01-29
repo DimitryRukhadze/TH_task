@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from .schemas import (
     TaskIn,
     TaskOut,
+    ListTaskOut,
     ComplianceIn,
     ComplianceOut,
     ReqIn,
@@ -32,7 +33,7 @@ from .services import (
 router = Router()
 
 
-@router.get("", response=list[TaskOut])
+@router.get("", response=list[ListTaskOut])
 @paginate
 def api_get_tasks(request):
     return get_tasks()

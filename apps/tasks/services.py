@@ -11,14 +11,17 @@ from .models import Task, CW, BaseModel, Requirements, TolType
 from .tasks import update_next_due_date
 
 
-def validate_cw_perf_date(task: Task, perform_date: date) -> None:
+def validate_cw_perf_date(perform_date: date) -> None:
     if perform_date > timezone.now().date():
         raise ValidationError(
             f"{perform_date} is in the future"
         )
-    if task.compliance and task.compliance.perform_date >= perform_date:
+
+
+def validate_cw_is_latest(cw: CW):
+    if cw != cw.task.compliance:
         raise ValidationError(
-            f"{perform_date} is before latest compliance"
+            "Can't change previous compliances"
         )
 
 
@@ -70,8 +73,8 @@ def get_tasks() -> QuerySet:
 
 def get_task(task_pk: int) -> Task | None:
     task = get_object_or_404(Task, pk=task_pk)
-    task.all_compliances = CW.objects.active().filter(task=task).order_by('perform_date')
-    task.all_requirements = Requirements.objects.active().filter(task=task).order_by('created_at')
+    task.all_compliances = task.compliances.active().order_by('perform_date')
+    task.all_requirements = task.requirements.active().filter(is_active=True).order_by('created_at')
     return task
 
 
@@ -107,7 +110,7 @@ def delete_task(task_pk: int) -> dict:
 def create_cw(task_pk: int, payload: dict) -> CW:
     task = BaseModel.get_object_or_404(Task, pk=task_pk)
 
-    validate_cw_perf_date(task, payload['perform_date'])
+    validate_cw_perf_date(payload['perform_date'])
 
     payload.update(task=task)
     cw = CW.objects.create(**payload)
@@ -135,7 +138,8 @@ def delete_cw(cw_pk: int, task_pk: int) -> None:
 def update_cw(cw_pk: int, payload: dict) -> CW:
     cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
 
-    validate_cw_perf_date(cw.task, payload['perform_date'])
+    validate_cw_perf_date(payload['perform_date'])
+    validate_cw_is_latest(cw)
 
     cw.perform_date = payload['perform_date']
     cw.save()

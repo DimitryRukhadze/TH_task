@@ -1,6 +1,5 @@
 from datetime import date
 from ninja import Schema
-from typing import Optional
 
 
 class TaskIn(Schema):
@@ -17,7 +16,6 @@ class ComplianceOut(Schema):
 
 class ComplianceIn(Schema):
     perform_date: date
-    next_due_date: date | None = None
 
 
 class ReqIn(Schema):
@@ -39,24 +37,29 @@ class ReqOut(Schema):
     tol_mos_unit: str | None = None
 
 
-class TaskOut(Schema):
+class ListTaskOut(Schema):
     pk: int
     code: str
     description: str
-    compliance: Optional[ComplianceOut] | None
-    all_compliances: Optional[list[ComplianceOut]] = None
-    all_requirements: Optional[list[ReqOut]] = None
-    curr_requirements: ReqOut | None
+    compliance: ComplianceOut | None = None
+    curr_requirements: ReqOut | None = None
 
-    @staticmethod
-    def resolve_compliance(obj):
-        if obj.all_compliances:
-            return
 
-    @staticmethod
-    def resolve_curr_requirements(obj):
-        if obj.all_requirements:
-            return
+class TaskOut(Schema):
+    class Meta:
+        fields = [
+            "pk",
+            "code",
+            "description",
+            "all_compiances",
+            "all_requirements"
+            ]
+
+    pk: int
+    code: str
+    description: str
+    all_compliances: list[ComplianceOut] | None = None
+    all_requirements: list[ReqOut] | None = None
 
 
 class Error(Schema):
