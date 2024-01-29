@@ -1,6 +1,6 @@
 from config.celery import app
 
-from .interval_maths import cnt_next_due, cnt_adjustment
+from .interval_maths import cnt_next_due
 from .models import Task
 
 
