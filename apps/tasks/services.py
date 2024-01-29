@@ -56,12 +56,12 @@ def validate_tol_units(payload: Schema):
             )
 
     if payload.tol_mos_unit:
-        if payload.tol_pos_mos and not payload.tol_neg_mos:
+        if not payload.tol_pos_mos and not payload.tol_neg_mos:
             raise ValidationError(
                 "Can not create Tolerance without values"
             )
 
-    if payload.tol_mos_unit not in TolType.provide_choice_types("MOS_UNIT"):
+    if payload.tol_mos_unit and payload.tol_mos_unit not in TolType.provide_choice_types("MOS_UNIT"):
         raise ValidationError(
             f"No {payload.tol_mos_unit} tolerance type"
         )
@@ -74,7 +74,7 @@ def get_tasks() -> QuerySet:
 def get_task(task_pk: int) -> Task | None:
     task = get_object_or_404(Task, pk=task_pk)
     task.all_compliances = task.compliances.active().order_by('perform_date')
-    task.all_requirements = task.requirements.active().filter(is_active=True).order_by('created_at')
+    task.all_requirements = task.requirements.active().order_by('created_at')
     return task
 
 
@@ -192,12 +192,12 @@ def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
         if curr_req:
             curr_req.is_active = False
             curr_req.save()
-    update_attrs = payload.dict()
+    update_attrs = payload.dict(exclude_unset=True)
 
     req_fields = model_to_dict(req)
 
     for name, value in update_attrs.items():
-        if value and req_fields.get(name) != value:
+        if req_fields.get(name) != value:
             setattr(req, name, value)
 
     if req.due_months and not req.due_months_unit:
@@ -206,6 +206,9 @@ def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
     if (req.tol_pos_mos or req.tol_neg_mos) and not req.tol_mos_unit:
         req.tol_pos_mos = None
         req.tol_neg_mos = None
+
+    if not req.tol_pos_mos and not req.tol_neg_mos:
+        req.tol_mos_unit = None
 
     req.save()
     update_next_due_date.delay(task_pk)

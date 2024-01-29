@@ -1,5 +1,6 @@
 from datetime import date
 from ninja import Schema
+from typing import Optional
 
 
 class TaskIn(Schema):
@@ -20,11 +21,11 @@ class ComplianceIn(Schema):
 
 class ReqIn(Schema):
     is_active: bool
-    due_months: float | None = None
-    due_months_unit: str | None = None
-    tol_pos_mos: float | None = None
-    tol_neg_mos: float | None = None
-    tol_mos_unit: str | None = None
+    due_months: Optional[float] = None
+    due_months_unit: Optional[str] = None
+    tol_pos_mos: Optional[float] = None
+    tol_neg_mos: Optional[float] = None
+    tol_mos_unit: Optional[str] = None
 
 
 class ReqOut(Schema):
@@ -51,7 +52,7 @@ class TaskOut(Schema):
             "pk",
             "code",
             "description",
-            "all_compiances",
+            "all_compliances",
             "all_requirements"
             ]
 

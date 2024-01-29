@@ -69,11 +69,21 @@ def cnt_next_due(task_id: int) -> None:
     latest_cw = task.compliance
     prev_cw = get_prev_cw(task)
 
-    if not curr_req or not latest_cw:
+    if not latest_cw:
+        return
+
+    if not curr_req:
+        latest_cw.next_due_date = None
+        latest_cw.adj_mos = None
+        latest_cw.save()
+
         return
 
     adjusted = False
     count_from = latest_cw.perform_date
+
+    if latest_cw.adj_mos:
+        adjusted = True
 
     if check_adjustment(latest_cw, prev_cw) and check_tol_window(curr_req, latest_cw, prev_cw):
         count_from = prev_cw.next_due_date
