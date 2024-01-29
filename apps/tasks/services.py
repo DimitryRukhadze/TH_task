@@ -73,8 +73,8 @@ def get_tasks() -> QuerySet:
 
 def get_task(task_pk: int) -> Task | None:
     task = get_object_or_404(Task, pk=task_pk)
-    task.all_compliances = task.compliances.active().order_by('perform_date')
-    task.all_requirements = task.requirements.active().order_by('created_at')
+    task.all_compliances = task.compliances.active().order_by('-perform_date')
+    task.all_requirements = task.requirements.active().order_by('-created_at')
     return task
 
 

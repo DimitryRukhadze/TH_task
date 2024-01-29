@@ -96,6 +96,6 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULE = {
         'update_due_date': {
             'task': 'apps.tasks.tasks.update_daily_due_dates',
-            'schedule': crontab()
+            'schedule': crontab(minute="*/5")
         },
     }
