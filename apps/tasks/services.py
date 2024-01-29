@@ -135,7 +135,8 @@ def delete_cw(cw_pk: int, task_pk: int) -> None:
     update_next_due_date.delay(task_pk)
 
 
-def update_cw(cw_pk: int, payload: dict) -> CW:
+def update_cw(task_pk: int, cw_pk: int, payload: dict) -> CW:
+    validate_task_exists(task_pk)
     cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
 
     validate_cw_perf_date(payload['perform_date'])

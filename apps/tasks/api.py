@@ -94,9 +94,9 @@ def api_delete_cw(request, cw_id, task_id):
             400: Error
             }
         )
-def api_update_cw(request, cw_id, payload: ComplianceIn):
+def api_update_cw(request, task_id, cw_id, payload: ComplianceIn):
     try:
-        cw = update_cw(cw_id, payload.dict())
+        cw = update_cw(task_id, cw_id, payload.dict())
     except ValidationError as err:
         return 400, {"message": err.message}
     return cw
