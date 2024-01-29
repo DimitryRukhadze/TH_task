@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.core.validators import MinLengthValidator
 
 
 class TolType(models.TextChoices):
@@ -76,7 +77,7 @@ class BaseModel(models.Model):
 
 
 class Task(BaseModel):
-    code = models.CharField("Task code", max_length=250)
+    code = models.CharField("Task code", max_length=250, validators=[MinLengthValidator(3)])
     description = models.TextField("Description")
 
     def __str__(self):
