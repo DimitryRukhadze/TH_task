@@ -7,7 +7,6 @@ from django.db.models import QuerySet
 from django.forms.models import model_to_dict
 
 from .schemas import ReqIn
-
 from .models import Task, CW, BaseModel, Requirements, TolType
 from .tasks import update_next_due_date
 

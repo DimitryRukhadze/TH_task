@@ -1,6 +1,31 @@
 from django.db import connection
-from functools import reduce
+from django.utils.encoding import force_str
+from functools import reduce, wraps
 import logging
+
+
+def log_queries(func):
+    @wraps(func)
+    def modified_func(*args, **kwargs):
+        def force_queries(queries):
+            return [{"sql": force_str(query["sql"]), "time": query["time"]} for query in queries]
+
+        result = func(*args, **kwargs)
+
+        logging.basicConfig(level=logging.DEBUG)
+        queries = connection.queries
+
+        logging.info("db queries log for %s:\n" % (func.__name__))
+
+        for query in force_queries(queries):
+            logging.info(f"Query: {query['sql']}")
+            logging.info(f"Query time: {query['time']}")
+
+        logging.info("TOTAL QUERIES: %s" % len(queries))
+        logging.info("TOTAL TIME:  %s\n" % reduce(lambda x, y: x + float(y["time"]), queries, 0.0))
+
+        return result
+    return modified_func
 
 
 class DbQueryLogger(object):
