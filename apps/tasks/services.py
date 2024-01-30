@@ -62,6 +62,16 @@ def validate_dues(payload: ReqIn) -> bool:
             "due_months should be a valid positive integer"
         )
 
+    if payload.due_months_unit == "M" and payload.due_months > 900:
+        raise ValidationError(
+            "Due months exceeds max aircraft lifespan"
+        )
+
+    if payload.due_months_unit == "D" and payload.due_months > 27375:
+        raise ValidationError(
+            "Due days exceeds max aircraft lifespan"
+        )
+
 
 def validate_tol_units(payload: ReqIn):
     if payload.tol_pos_mos or payload.tol_neg_mos:
@@ -87,7 +97,7 @@ def get_tasks() -> QuerySet:
 
 
 def get_task(task: Task) -> Task | None:
-    task.all_compliances = task.compliances.active().order_by('-perform_date')
+    task.all_compliances = task.compliances.active().order_by('-perform_date')[:5]
     task.all_requirements = task.requirements.active().order_by('-created_at')
     return task
 
