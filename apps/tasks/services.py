@@ -57,6 +57,11 @@ def validate_dues(payload: ReqIn) -> bool:
             f"No {payload.due_months_unit} due months type"
         )
 
+    if not payload.due_months >= 0 and payload.due_months is not int:
+        raise ValidationError(
+            "due_months should be a valid positive integer"
+        )
+
 
 def validate_tol_units(payload: ReqIn):
     if payload.tol_pos_mos or payload.tol_neg_mos:
@@ -164,6 +169,7 @@ def create_req(task: Task, payload: ReqIn) -> Requirements:
         tol_mos_unit=payload.tol_mos_unit,
         is_active=payload.is_active
     )
+
     if task.curr_requirements and payload.is_active:
         curr_req = task.curr_requirements
         curr_req.is_active = False

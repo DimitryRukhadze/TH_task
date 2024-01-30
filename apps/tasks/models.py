@@ -125,7 +125,7 @@ class Requirements(BaseModel):
         related_name="requirements"
     )
 
-    due_months = models.IntegerField(
+    due_months = models.PositiveIntegerField(
         "Due_months",
         blank=True,
         null=True
