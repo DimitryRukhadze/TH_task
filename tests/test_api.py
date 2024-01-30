@@ -2,11 +2,12 @@ import pytest
 import json
 from copy import deepcopy
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
 
 from apps.tasks.models import Task, Requirements, CW
-from apps.tasks.interval_maths import cnt_next_due, cnt_adjustment
+from apps.tasks.interval_maths import cnt_next_due
 
 
 CORRECT_TASK_PAYLOAD = [
@@ -438,7 +439,6 @@ def test_create_tasks_fails(client, task_attrs):
     'task_update',
     [
         {"description": "updated long str"},
-        {"due_months": 2},
         {"code": "112219-MRIP-MRBR"},
     ]
 )
@@ -453,6 +453,7 @@ def test_update_task(client, task_update):
         json.dumps(obj_attrs),
         content_type='application/json'
     )
+    print("FAILED TO RESPOND")
 
     assert response.status_code == 200
     updated_task_attrs = json.loads(response.content)
@@ -466,7 +467,6 @@ def test_update_task(client, task_update):
     'task_update',
     [
         {"description": 3209867},
-        {"due_months": "2"},
         {"code": 112219}
     ]
 )
@@ -506,28 +506,36 @@ def test_delete_task(client, task_attrs):
 
 
 @pytest.mark.parametrize(
-    'num,result',
+    'payload,result',
     [
-        (0, 200),
-        (-1, 400),
-        (1, 200)
+        ({"perform_date": "2020-01-01"}, 200),
+        ({"perform_date": "2030-01-01"}, 400),
+        ({"perform_date": "2020-01-01"}, 200)
     ]
 )
 @pytest.mark.django_db
-def test_create_cw_for_task(client, num, result):
-    today = timezone.now().date()
-    perf_date = today - timezone.timedelta(days=num)
+def test_create_cw_for_task(client, payload, result):
 
     task = Task.objects.create(code='00-IJM-001', description='long_str')
 
-    today_cws_payload = {"perform_date": perf_date.strftime("%Y-%m-%d")}
     response = client.post(
         f'/api/tasks/{task.pk}/cws/',
-        json.dumps(today_cws_payload),
+        json.dumps(payload),
         content_type='application/json'
     )
 
     assert response.status_code == result
+
+    if response.status_code == 200:
+        new_cw_date = datetime.strptime(payload["perform_date"], "%Y-%m-%d") - relativedelta(days=30)
+
+        new_response = client.post(
+            f'/api/tasks/{task.pk}/cws/',
+            json.dumps({"perform_date": datetime.strftime(new_cw_date, "%Y-%m-%d")}),
+            content_type='application/json'
+        )
+
+        assert json.loads(new_response.content).get("message") == "Perfrom date is before previous CW"
 
 
 @pytest.mark.parametrize(

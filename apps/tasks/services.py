@@ -1,20 +1,30 @@
 from datetime import date
 
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from django.forms.models import model_to_dict
 
-from .schemas import ReqIn
+from .schemas import ReqIn, ComplianceIn
 from .models import Task, CW, BaseModel, Requirements, TolType
 from .tasks import update_next_due_date
+# from .interval_maths import get_prev_cw
 
 
-def validate_cw_perf_date(perform_date: date) -> None:
+def validate_cw_perf_date(perform_date: date, prev_cw: CW) -> None:
     if perform_date > timezone.now().date():
         raise ValidationError(
             f"{perform_date} is in the future"
+        )
+
+    if prev_cw and prev_cw.perform_date >= perform_date:
+        raise ValidationError(
+            "Perfrom date is before previous CW"
+        )
+
+    if perform_date.year <= 1990:
+        raise ValidationError(
+            "Invaild CW year. Too old."
         )
 
 
@@ -71,8 +81,7 @@ def get_tasks() -> QuerySet:
     return Task.objects.active().order_by("code", "description")
 
 
-def get_task(task_pk: int) -> Task | None:
-    task = get_object_or_404(Task, pk=task_pk)
+def get_task(task: Task) -> Task | None:
     task.all_compliances = task.compliances.active().order_by('-perform_date')
     task.all_requirements = task.requirements.active().order_by('-created_at')
     return task
@@ -88,32 +97,30 @@ def create_tasks(payload: list[dict]) -> list[Task]:
     return new_objs
 
 
-def update_tasks(task_pk: int, payload: dict) -> Task:
-    update_obj = get_object_or_404(Task, pk=task_pk)
-
+def update_tasks(task: Task, payload: dict) -> Task:
+    validate_task_exists(task.pk)
     for key, value in payload.items():
-        setattr(update_obj, key, value)
+        setattr(task, key, value)
 
-    update_obj.save()
+    task.save()
 
-    return update_obj
+    return task
 
 
-def delete_task(task_pk: int) -> dict:
-    task = BaseModel.get_object_or_404(Task, pk=task_pk)
-    if task:
-        task_cws = CW.objects.filter(task=task)
+def delete_task(task: Task):
+    cws = CW.objects.active().filter(task=task)
+    requirements = Requirements.objects.active().filter(task=task)
+    cws.delete()
+    requirements.delete()
     task.delete()
-    task_cws.delete()
 
 
-def create_cw(task_pk: int, payload: dict) -> CW:
-    task = BaseModel.get_object_or_404(Task, pk=task_pk)
+def create_cw(task: Task, payload: ComplianceIn) -> CW:
 
-    validate_cw_perf_date(payload['perform_date'])
+    prev_cw = task.compliance
+    validate_cw_perf_date(payload.perform_date, prev_cw)
 
-    payload.update(task=task)
-    cw = CW.objects.create(**payload)
+    cw = CW.objects.create(task=task, perform_date=payload.perform_date)
     cw.save()
 
     update_next_due_date.delay(task.pk)
@@ -121,28 +128,16 @@ def create_cw(task_pk: int, payload: dict) -> CW:
     return cw
 
 
-def get_cws(task_pk: int) -> QuerySet:
-    task = BaseModel.get_object_or_404(Task, pk=task_pk)
-    return CW.objects.filter(
-            task=task.pk,
-            is_deleted=False
-        ).order_by("perform_date")
+def get_cws(task: Task) -> QuerySet:
+    return CW.objects.active().filter(task=task).order_by("perform_date")
 
 
-def delete_cw(cw_pk: int, task_pk: int) -> None:
-    cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
-    cw.delete()
-    update_next_due_date.delay(task_pk)
+def update_cw(task: Task, cw: CW, payload: ComplianceIn) -> CW:
 
-
-def update_cw(task_pk: int, cw_pk: int, payload: dict) -> CW:
-    validate_task_exists(task_pk)
-    cw = BaseModel.get_object_or_404(CW, pk=cw_pk)
-
-    validate_cw_perf_date(payload['perform_date'])
+    validate_cw_perf_date(payload.perform_date)
     validate_cw_is_latest(cw)
 
-    cw.perform_date = payload['perform_date']
+    cw.perform_date = payload.perform_date
     cw.save()
 
     update_next_due_date.delay(cw.task.pk)
@@ -150,12 +145,16 @@ def update_cw(task_pk: int, cw_pk: int, payload: dict) -> CW:
     return cw
 
 
-def create_req(task_pk: int, payload: ReqIn) -> Requirements:
+def delete_cw(cw: CW, task_pk: int) -> None:  # ВНИМАНИЕ! КАК РАБОТАЕТ?
+    cw.delete()
+    update_next_due_date.delay(task_pk)
 
-    validate_task_exists(task_pk)
+
+def create_req(task: Task, payload: ReqIn) -> Requirements:
+
     validate_dues(payload)
     validate_tol_units(payload)
-    task = BaseModel.get_object_or_404(Task, pk=task_pk)
+
     req = Requirements.objects.create(
         task=task,
         due_months=payload.due_months,
@@ -177,16 +176,13 @@ def create_req(task_pk: int, payload: ReqIn) -> Requirements:
     return req
 
 
-def get_req(task_pk: int, req_pk: int):
+def get_req(task_pk: int, req_pk: int):  # Возможно стоит избавиться вообще!
     validate_task_exists(task_pk)
     return BaseModel.get_object_or_404(Requirements, pk=req_pk)
 
 
-def update_req(task_pk: int, req_pk: int, payload: ReqIn) -> Requirements:
-    validate_task_exists(task_pk)
-
-    task = BaseModel.get_object_or_404(Task, pk=task_pk)
-    req = BaseModel.get_object_or_404(Requirements, pk=req_pk)
+def update_req(task: Task, req: Requirements, payload: ReqIn) -> Requirements:
+    validate_task_exists(task.pk)
 
     if req.is_active is False and payload.is_active:
         curr_req = task.curr_requirements
@@ -212,14 +208,13 @@ def update_req(task_pk: int, req_pk: int, payload: ReqIn) -> Requirements:
         req.tol_mos_unit = None
 
     req.save()
-    update_next_due_date.delay(task_pk)
+    update_next_due_date.delay(task.pk)
 
     return req
 
 
-def delete_req(task_pk: int, req_pk: int):
+def delete_req(task_pk: int, req: Requirements):
     validate_task_exists(task_pk)
-    req = BaseModel.get_object_or_404(Requirements, pk=req_pk)
     req.is_active = False
     req.delete()
     update_next_due_date.delay(task_pk)
