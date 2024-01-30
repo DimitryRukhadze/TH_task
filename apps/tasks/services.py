@@ -5,7 +5,8 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from django.forms.models import model_to_dict
-from ninja import Schema
+
+from .schemas import ReqIn
 
 from .models import Task, CW, BaseModel, Requirements, TolType
 from .tasks import update_next_due_date
@@ -32,7 +33,7 @@ def validate_task_exists(task_pk: int) -> bool:
         )
 
 
-def validate_dues(payload: Schema) -> bool:
+def validate_dues(payload: ReqIn) -> bool:
     if not payload.due_months:
         raise ValidationError(
             "Can not create Requirements without dues"
@@ -48,7 +49,7 @@ def validate_dues(payload: Schema) -> bool:
         )
 
 
-def validate_tol_units(payload: Schema):
+def validate_tol_units(payload: ReqIn):
     if payload.tol_pos_mos or payload.tol_neg_mos:
         if not payload.tol_mos_unit:
             raise ValidationError(
@@ -150,7 +151,7 @@ def update_cw(task_pk: int, cw_pk: int, payload: dict) -> CW:
     return cw
 
 
-def create_req(task_pk: int, payload: Schema) -> Requirements:
+def create_req(task_pk: int, payload: ReqIn) -> Requirements:
 
     validate_task_exists(task_pk)
     validate_dues(payload)
@@ -182,7 +183,7 @@ def get_req(task_pk: int, req_pk: int):
     return BaseModel.get_object_or_404(Requirements, pk=req_pk)
 
 
-def update_req(task_pk: int, req_pk: int, payload: Schema) -> Requirements:
+def update_req(task_pk: int, req_pk: int, payload: ReqIn) -> Requirements:
     validate_task_exists(task_pk)
 
     task = BaseModel.get_object_or_404(Task, pk=task_pk)
