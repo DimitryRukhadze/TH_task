@@ -26,7 +26,6 @@ from .services import (
     update_cw,
     create_req,
     update_req,
-    get_req,
     delete_req
     )
 
@@ -103,7 +102,7 @@ def api_delete_cw(request, cw_id, task_id):
         )
 def api_update_cw(request, task_id, cw_id, payload: ComplianceIn):
     task = BaseModel.get_object_or_404(Task, pk=task_id)
-    cw = BaseModel.get_object_or_404(CW, pk=cw_id)
+    cw = BaseModel.get_object_or_404(CW, pk=cw_id, task=task)
     try:
         cw = update_cw(task, cw, payload)
     except ValidationError as err:
@@ -132,11 +131,8 @@ def api_create_req(request, task_id, payload: ReqIn):
         response={200: ReqOut, 400: Error}
     )
 def api_get_req(request, task_id: int, req_id: int):
-    try:
-        req = get_req(task_id, req_id)
-    except ValidationError as err:
-        return 400, {"message": err.message}
-    return 200, req
+    task = BaseModel.get_object_or_404(Task, pk=task_id)
+    return BaseModel.get_object_or_404(Requirements, pk=req_id, task=task)
 
 
 @router.put(
@@ -145,7 +141,7 @@ def api_get_req(request, task_id: int, req_id: int):
     )
 def api_update_req(request, task_id, req_id, payload: ReqIn):
     task = BaseModel.get_object_or_404(Task, pk=task_id)
-    requirement = BaseModel.get_object_or_404(Requirements, pk=req_id)
+    requirement = BaseModel.get_object_or_404(Requirements, pk=req_id, task=task)
     try:
         req = update_req(task, requirement, payload)
     except ValidationError as err:

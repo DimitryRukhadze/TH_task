@@ -6,7 +6,7 @@ from django.db.models import QuerySet
 from django.forms.models import model_to_dict
 
 from .schemas import ReqIn, ComplianceIn
-from .models import Task, CW, BaseModel, Requirements, TolType
+from .models import Task, CW, Requirements, TolType
 from .tasks import update_next_due_date
 # from .interval_maths import get_prev_cw
 
@@ -193,9 +193,9 @@ def create_req(task: Task, payload: ReqIn) -> Requirements:
     return req
 
 
-def get_req(task_pk: int, req_pk: int):  # Возможно стоит избавиться вообще!
-    validate_task_exists(task_pk)
-    return BaseModel.get_object_or_404(Requirements, pk=req_pk)
+# def get_req(task_pk: int, req_pk: int):  # Возможно стоит избавиться вообще!
+#     validate_task_exists(task_pk)
+#     return BaseModel.get_object_or_404(Requirements, pk=req_pk)
 
 
 def update_req(task: Task, req: Requirements, payload: ReqIn) -> Requirements:
