@@ -42,7 +42,19 @@ def validate_task_exists(task_pk: int) -> bool:
         )
 
 
-def validate_dues(payload: ReqIn) -> bool:
+def validate_due_mos_extremes(payload: ReqIn) -> None:
+    if not payload.due_months >= 0 and payload.due_months is not int:
+        raise ValidationError(
+            "due_months should be a valid positive integer"
+        )
+
+    if payload.due_months > 27375:  # 27375 days = 75 years
+        raise ValidationError(
+            "Due months exceeds max aircraft lifespan"
+        )
+
+
+def validate_dues(payload: ReqIn) -> None:
     if not payload.due_months:
         raise ValidationError(
             "Can not create Requirements without dues"
@@ -56,28 +68,14 @@ def validate_dues(payload: ReqIn) -> bool:
         raise ValidationError(
             f"No {payload.due_months_unit} due months type"
         )
-
-    if not payload.due_months >= 0 and payload.due_months is not int:
-        raise ValidationError(
-            "due_months should be a valid positive integer"
-        )
-
-    if payload.due_months_unit == "M" and payload.due_months > 900:
-        raise ValidationError(
-            "Due months exceeds max aircraft lifespan"
-        )
-
-    if payload.due_months_unit == "D" and payload.due_months > 27375:
-        raise ValidationError(
-            "Due days exceeds max aircraft lifespan"
-        )
+    validate_due_mos_extremes(payload)
 
 
 def validate_tol_units(payload: ReqIn):
     if payload.tol_pos_mos or payload.tol_neg_mos:
         if not payload.tol_mos_unit:
             raise ValidationError(
-                'No unit  for tolerances'
+                'No unit for tolerances'
             )
 
     if payload.tol_mos_unit:
@@ -199,6 +197,9 @@ def get_req(task_pk: int, req_pk: int):  # Возможно стоит изба�
 
 def update_req(task: Task, req: Requirements, payload: ReqIn) -> Requirements:
     validate_task_exists(task.pk)
+
+    if payload.due_months:
+        validate_due_mos_extremes(payload)
 
     if req.is_active is False and payload.is_active:
         curr_req = task.curr_requirements
