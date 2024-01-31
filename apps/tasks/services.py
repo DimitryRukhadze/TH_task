@@ -123,8 +123,11 @@ def update_tasks(task: Task, payload: dict) -> Task:
 def delete_task(task: Task):
     cws = CW.objects.active().filter(task=task)
     requirements = Requirements.objects.active().filter(task=task)
-    cws.delete()
-    requirements.delete()
+    for cw in cws:
+        cw.delete()
+    for req in requirements:
+        req.delete()
+
     task.delete()
 
 
@@ -232,7 +235,6 @@ def update_req(task: Task, req: Requirements, payload: ReqIn) -> Requirements:
 
 def delete_req(task_pk: int, req: Requirements):
     validate_task_exists(task_pk)
-    req.is_active = False
     req.delete()
     update_next_due_date.delay(task_pk)
     return req

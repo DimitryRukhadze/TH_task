@@ -70,6 +70,9 @@ class BaseModel(models.Model):
         if hasattr(self, "is_deleted"):
             self.is_deleted = True
             self.save()
+        if hasattr(self, "is_active"):
+            self.is_active = False
+            self.save()
 
     @staticmethod
     def get_object_or_404(obj: object, **kwargs) -> object:
