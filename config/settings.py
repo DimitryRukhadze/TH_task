@@ -86,6 +86,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+NINJA_PAGINATION_PER_PAGE = 10
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CELERY_BROKER_URL = 'redis://localhost:6379'

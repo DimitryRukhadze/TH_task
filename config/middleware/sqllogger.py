@@ -12,7 +12,7 @@ def log_queries(func):
 
         result = func(*args, **kwargs)
 
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig("SQLlogging.log", level=logging.DEBUG)
         queries = connection.queries
 
         logging.info("db queries log for %s:\n" % (func.__name__))
@@ -22,7 +22,7 @@ def log_queries(func):
             logging.info(f"Query time: {query['time']}")
 
         logging.info("TOTAL QUERIES: %s" % len(queries))
-        logging.info("TOTAL TIME:  %s\n" % reduce(lambda x, y: x + float(y["time"]), queries, 0.0))
+        logging.info("TOTAL TIME:  %s\n" % reduce(lambda x, y: x + float(y["time"]), queries,))
 
         return result
     return modified_func
@@ -38,7 +38,7 @@ class DbQueryLogger(object):
 
     def modified_func(self, *args, **kwargs):
         result = self.get_response(*args, **kwargs)
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(filename="SQLlog.log", level=logging.DEBUG)
 
         logging.info("db queries log for %s:\n" % (self.handler_info.get("func_name")))
 

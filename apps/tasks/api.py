@@ -1,5 +1,5 @@
 from ninja.router import Router
-from ninja.pagination import paginate
+from ninja.pagination import paginate, LimitOffsetPagination
 
 from django.core.exceptions import ValidationError
 from .models import BaseModel, Task, CW, Requirements
@@ -34,7 +34,7 @@ router = Router()
 
 
 @router.get("", response=list[ListTaskOut])
-@paginate
+@paginate(LimitOffsetPagination)
 def api_get_tasks(request):
     return get_tasks()
 
