@@ -1298,3 +1298,155 @@ INFO:root:Query time: 0.000
 INFO:root:TOTAL QUERIES: 2
 INFO:root:TOTAL TIME:  0.0
 
+INFO:root:db queries log for <function ModelAdmin.changelist_view at 0x7fed0268b740>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:36:48.962194' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_task"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_task"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" ORDER BY "tasks_task"."code" ASC, "tasks_task"."id" DESC
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 5
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function AdminSite.i18n_javascript at 0x7fed02688fe0>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:36:48.981702' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 2
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function ModelAdmin.changelist_view at 0x7fed0268bc40>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:36:51.033806' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_cw"."id", "tasks_cw"."is_deleted", "tasks_cw"."created_at", "tasks_cw"."updated_at", "tasks_cw"."task_id", "tasks_cw"."perform_date", "tasks_cw"."next_due_date", "tasks_cw"."adj_mos" FROM "tasks_cw" ORDER BY "tasks_cw"."perform_date" DESC, "tasks_cw"."id" DESC
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 5
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function AdminSite.i18n_javascript at 0x7fed02688fe0>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:36:51.051331' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 2
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function ModelAdmin.changelist_view at 0x7fed0268bc40>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:36:52.726285' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_cw"."id", "tasks_cw"."is_deleted", "tasks_cw"."created_at", "tasks_cw"."updated_at", "tasks_cw"."task_id", "tasks_cw"."perform_date", "tasks_cw"."next_due_date", "tasks_cw"."adj_mos" FROM "tasks_cw" ORDER BY "tasks_cw"."perform_date" DESC, "tasks_cw"."id" DESC
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 5
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function AdminSite.i18n_javascript at 0x7fed02688fe0>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:36:52.744928' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 2
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function ModelAdmin.changelist_view at 0x7fed0268bc40>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:40:24.538830' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_cw"."id", "tasks_cw"."is_deleted", "tasks_cw"."created_at", "tasks_cw"."updated_at", "tasks_cw"."task_id", "tasks_cw"."perform_date", "tasks_cw"."next_due_date", "tasks_cw"."adj_mos" FROM "tasks_cw" ORDER BY "tasks_cw"."perform_date" DESC, "tasks_cw"."id" DESC
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 5
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function AdminSite.i18n_javascript at 0x7fed02688fe0>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:40:24.556495' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 2
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function ModelAdmin.changelist_view at 0x7fed0268b740>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:43:57.482639' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_task"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_task"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" ORDER BY "tasks_task"."code" ASC, "tasks_task"."id" DESC
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_cw"."id", "tasks_cw"."is_deleted", "tasks_cw"."created_at", "tasks_cw"."updated_at", "tasks_cw"."task_id", "tasks_cw"."perform_date", "tasks_cw"."next_due_date", "tasks_cw"."adj_mos" FROM "tasks_cw" WHERE ("tasks_cw"."task_id" = 4029 AND NOT "tasks_cw"."is_deleted") ORDER BY "tasks_cw"."perform_date" DESC LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."task_id" = 4029 AND "tasks_requirements"."is_active") ORDER BY "tasks_requirements"."id" ASC LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 7
+INFO:root:TOTAL TIME:  0.001
+
+INFO:root:db queries log for <function AdminSite.i18n_javascript at 0x7fed02688fe0>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:43:57.508295' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 2
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function ModelAdmin.changelist_view at 0x7fed0268bc40>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:44:06.816385' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT COUNT(*) AS "__count" FROM "tasks_cw"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_cw"."id", "tasks_cw"."is_deleted", "tasks_cw"."created_at", "tasks_cw"."updated_at", "tasks_cw"."task_id", "tasks_cw"."perform_date", "tasks_cw"."next_due_date", "tasks_cw"."adj_mos" FROM "tasks_cw" ORDER BY "tasks_cw"."perform_date" DESC, "tasks_cw"."id" DESC
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE "tasks_task"."id" = 4029 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE "tasks_task"."id" = 4029 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 7
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <function AdminSite.i18n_javascript at 0x7fed02688fe0>:
+
+INFO:root:Query: SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."expire_date" > '2024-02-01 11:44:06.835597' AND "django_session"."session_key" = 'x4v8i65ueu9x52eg6w95p9bxklqwoen8') LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = 2 LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 2
+INFO:root:TOTAL TIME:  0.0
+
