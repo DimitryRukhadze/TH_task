@@ -1,3 +1,5 @@
+import dj_database_url
+
 from pathlib import Path
 
 from celery.schedules import crontab
@@ -55,9 +57,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "testing",
+        "USER": "SuperDok",
+        "PASSWORD": "testing",
+        "HOST": "localhost",
+        "PORT": "5432"
     }
 }
 

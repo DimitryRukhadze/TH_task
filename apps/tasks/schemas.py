@@ -44,6 +44,12 @@ class ListTaskOut(Schema):
     compliance: ComplianceOut | None = None
     curr_requirements: ReqOut | None = None
 
+    @staticmethod
+    def resolve_compliance(obj):
+        if not obj.compliance:
+            return
+        return obj.compliance
+
 
 class TaskOut(Schema):
     class Meta:

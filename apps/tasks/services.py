@@ -2,7 +2,7 @@ from datetime import date
 
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Prefetch
 from django.forms.models import model_to_dict
 
 from .schemas import ReqIn, ComplianceIn
@@ -90,7 +90,8 @@ def validate_tol_units(payload: ReqIn):
 
 
 def get_tasks() -> QuerySet:
-    return Task.objects.active().order_by("code", "description")
+    compliances = CW.objects.active().order_by("perform_date")
+    return Task.objects.active().prefetch_related(Prefetch("compliances", queryset=compliances)).order_by("code", "description")
 
 
 def get_task(task: Task) -> Task | None:
