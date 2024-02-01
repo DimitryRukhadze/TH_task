@@ -89,7 +89,8 @@ def api_get_cws(request, task_id: int):
 
 @router.delete("{task_id}/cws/{cw_id}/")
 def api_delete_cw(request, cw_id, task_id):
-    cw = BaseModel.get_object_or_404(CW, pk=cw_id)
+    task = BaseModel.get_object_or_404(Task, pk=task_id)
+    cw = BaseModel.get_object_or_404(CW, pk=cw_id, task=task)
     return delete_cw(cw, task_id)
 
 
@@ -154,9 +155,10 @@ def api_update_req(request, task_id, req_id, payload: ReqIn):
         response={200: ReqOut, 400: Error}
     )
 def api_delete_req(request, task_id, req_id):
-    req = BaseModel.get_object_or_404(Requirements, pk=req_id)
+    task = BaseModel.get_object_or_404(Task, pk=task_id)
+    req = BaseModel.get_object_or_404(Requirements, pk=req_id, task=task)
     try:
-        req = delete_req(task_id, req)
+        req = delete_req(task, req)
     except ValidationError as err:
         return 400, {"message": err.message}
     return 200, req

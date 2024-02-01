@@ -8,7 +8,6 @@ from django.forms.models import model_to_dict
 from .schemas import ReqIn, ComplianceIn
 from .models import Task, CW, Requirements, TolType
 from .tasks import update_next_due_date
-# from .interval_maths import get_prev_cw
 
 
 def validate_cw_perf_date(perform_date: date, prev_cw: CW) -> None:
@@ -161,7 +160,7 @@ def update_cw(task: Task, cw: CW, payload: ComplianceIn) -> CW:
     return cw
 
 
-def delete_cw(cw: CW, task_pk: int) -> None:  # ВНИМАНИЕ! КАК РАБОТАЕТ?
+def delete_cw(cw: CW, task_pk: int) -> None:
     cw.delete()
     update_next_due_date.delay(task_pk)
 
@@ -233,8 +232,7 @@ def update_req(task: Task, req: Requirements, payload: ReqIn) -> Requirements:
     return req
 
 
-def delete_req(task_pk: int, req: Requirements):
-    validate_task_exists(task_pk)
+def delete_req(task: Task, req: Requirements):
     req.delete()
-    update_next_due_date.delay(task_pk)
+    update_next_due_date.delay(task.pk)
     return req
