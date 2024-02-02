@@ -42,30 +42,38 @@ class ListTaskOut(Schema):
     code: str
     description: str
     compliance: ComplianceOut | None = None
-    curr_requirements: ReqOut | None = None
+    requirements: ReqOut | None = None
 
     @staticmethod
     def resolve_compliance(obj):
-        if not obj.compliance:
+        if not obj.last_compliances:
             return
-        return obj.compliance
+        return obj.last_compliances[0]
+
+    @staticmethod
+    def resolve_requirements(obj):
+        if not obj.active_requirements:
+            return
+        return obj.active_requirements[0]
 
 
 class TaskOut(Schema):
-    class Meta:
-        fields = [
-            "pk",
-            "code",
-            "description",
-            "all_compliances",
-            "all_requirements"
-            ]
-
-    pk: int
     code: str
     description: str
-    all_compliances: list[ComplianceOut] | None = None
-    all_requirements: list[ReqOut] | None = None
+    task_compliances: list[ComplianceOut] | None = None
+    task_requirements: list[ReqOut] | None = None
+
+    @staticmethod
+    def resolve_task_compliances(obj):
+        if not obj.cws:
+            return
+        return obj.cws
+
+    @staticmethod
+    def resolve_task_requirements(obj):
+        if not obj.all_reqs:
+            return
+        return obj.all_reqs
 
 
 class Error(Schema):

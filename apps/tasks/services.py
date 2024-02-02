@@ -90,14 +90,18 @@ def validate_tol_units(payload: ReqIn):
 
 
 def get_tasks() -> QuerySet:
-    compliances = CW.objects.active().order_by("perform_date")
-    return Task.objects.active().prefetch_related(Prefetch("compliances", queryset=compliances)).order_by("code", "description")
+    compliances = CW.objects.active().order_by("-perform_date")[:1]
+    requirements = Requirements.objects.filter(is_active=True)
+    pre_cws = Prefetch("compliances", queryset=compliances, to_attr="last_compliances")
+    pre_req = Prefetch("requirements", queryset=requirements, to_attr='active requirements')
+    tasks = Task.objects.active().prefetch_related(pre_cws).prefetch_related(pre_req).order_by("code", "description")
+    return tasks
 
 
-def get_task(task: Task) -> Task | None:
-    task.all_compliances = task.compliances.active().order_by('-perform_date')[:5]
-    task.all_requirements = task.requirements.active().order_by('-created_at')
-    return task
+# def get_task(task: Task) -> Task | None:
+#     task.all_compliances = task.compliances.active().order_by('-perform_date')[:5]
+#     task.all_requirements = task.requirements.active().order_by('-created_at')
+#     return task
 
 
 def create_tasks(payload: list[dict]) -> list[Task]:

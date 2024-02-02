@@ -2,6 +2,7 @@ from ninja.router import Router
 from ninja.pagination import paginate, LimitOffsetPagination
 
 from django.core.exceptions import ValidationError
+from django.db.models import Prefetch
 from .models import BaseModel, Task, CW, Requirements
 
 from .schemas import (
@@ -16,7 +17,6 @@ from .schemas import (
     )
 from .services import (
     get_tasks,
-    get_task,
     create_tasks,
     update_tasks,
     delete_task,
@@ -41,8 +41,10 @@ def api_get_tasks(request):
 
 @router.get("{task_id}/", response=TaskOut)
 def api_get_task(request, task_id: int):
-    task = BaseModel.get_object_or_404(Task, pk=task_id)
-    return get_task(task)
+    pre_cws = Prefetch("compliances", queryset=CW.objects.active()[:5], to_attr="cws")
+    pre_reqs = Prefetch("requirements", queryset=Requirements.objects.filter(is_active=True), to_attr="all_reqs")
+    task = BaseModel.get_object_or_404(Task.objects.prefetch_related(pre_cws).prefetch_related(pre_reqs), pk=task_id)
+    return task
 
 
 @router.post("", response=list[TaskOut])
