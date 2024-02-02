@@ -95,6 +95,9 @@ def cnt_next_due(task_id: int) -> None:
     if curr_req.due_months_unit == 'D':
         latest_cw.next_due_date = count_from + relativedelta(days=curr_req.due_months)
 
+    if not curr_req.due_months > 0:
+        latest_cw.next_due_date = None
+
     latest_cw.save()
 
     if adjusted:
