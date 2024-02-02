@@ -215,3 +215,754 @@ INFO:root:TOTAL QUERIES: 3
 INFO:root:TOTAL TIME:  0.002
 
 INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+DEBUG:celery.utils.functional:
+def update_next_due_date(task_id):
+    return 1
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90ead15050>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:31:38.689112+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90ead15050>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:31:57.586455+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90ead15050>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:32:17.538828+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.005
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.002
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for functools.partial(<function openapi_view at 0x7f90eb5bf560>, api=<ninja.main.NinjaAPI object at 0x7f90ec1c83d0>):
+
+INFO:root:TOTAL QUERIES: 0
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for functools.partial(<function openapi_json at 0x7f90eb5bf1a0>, api=<ninja.main.NinjaAPI object at 0x7f90ec1c83d0>):
+
+INFO:root:TOTAL QUERIES: 0
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f90eb5d0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.003
+
+DEBUG:celery.utils.functional:
+def update_next_due_date(task_id):
+    return 1
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f3913f10ed0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:34:02.842351+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.005
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f3913f10ed0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:34:16.833083+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.051
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.053
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f39147cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0fdb1f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+DEBUG:celery.utils.functional:
+def update_next_due_date(task_id):
+    return 1
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0fda918d90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:36:32.529728+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0fdb1f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f82895e8a90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+DEBUG:celery.utils.functional:
+def update_next_due_date(task_id):
+    return 1
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f82895e0b50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:38:03.733817+00:00'::timestamptz, "task_id" = 4, "due_months" = 5, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f82895e8a90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f82895e8a90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7ff361515010>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:39:34.829524+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.024
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.024
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7ff361de4a10>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7ff361515010>>:
+
+INFO:root:TOTAL QUERIES: 0
+INFO:root:TOTAL TIME:  0.0
+
+WARNING:django.request:Unprocessable Entity: /api/tasks/4/requirements/1/
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7ff361515010>>:
+
+INFO:root:TOTAL QUERIES: 0
+INFO:root:TOTAL TIME:  0.0
+
+WARNING:django.request:Unprocessable Entity: /api/tasks/4/requirements/1/
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/schemas.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f3655d1db90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:43:19.185344+00:00'::timestamptz, "task_id" = 4, "due_months" = NULL, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.024
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.026000000000000002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f36565e4b10>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0804dd4a50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0804dd4a50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+DEBUG:celery.utils.functional:
+def update_next_due_date(task_id):
+    return 1
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0804515450>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:44:48.782230+00:00'::timestamptz, "task_id" = 4, "due_months" = 5, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7f0804dd4a50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc697f10f50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:46:04.769412+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc697f10f50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:46:30.290521+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for functools.partial(<function openapi_view at 0x7fc6987bb560>, api=<ninja.main.NinjaAPI object at 0x7fc6987ff110>):
+
+INFO:root:TOTAL QUERIES: 0
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for functools.partial(<function openapi_json at 0x7fc6987bb1a0>, api=<ninja.main.NinjaAPI object at 0x7fc6987ff110>):
+
+INFO:root:TOTAL QUERIES: 0
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc697f10f50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.002
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:47:05.995588+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.006
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.0
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc697f10f50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:47:51.483454+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc697f10f50>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:48:06.723864+00:00'::timestamptz, "task_id" = 4, "due_months" = NULL, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.002
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc6987cca90>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.001
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:django.utils.autoreload:/home/aviatx/Documents/projects/TH_task/apps/tasks/interval_maths.py changed, reloading.
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc5125f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc5125f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+DEBUG:celery.utils.functional:
+def update_next_due_date(task_id):
+    return 1
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc511d1d250>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:50:08.734186+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.005
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc5125f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc511d1d250>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:50:21.875760+00:00'::timestamptz, "task_id" = 4, "due_months" = 0, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc5125f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.001
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc511d1d250>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:50:34.522441+00:00'::timestamptz, "task_id" = 4, "due_months" = 6, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.003
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.004
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc5125f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc511d1d250>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.000
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE (NOT "tasks_requirements"."is_deleted" AND "tasks_requirements"."id" = 1 AND "tasks_requirements"."task_id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT 1 AS "a" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 1
+INFO:root:Query time: 0.000
+INFO:root:Query: UPDATE "tasks_requirements" SET "is_deleted" = false, "created_at" = '2024-02-02T14:20:31.886939+00:00'::timestamptz, "updated_at" = '2024-02-02T14:50:45.618292+00:00'::timestamptz, "task_id" = 4, "due_months" = NULL, "due_months_unit" = 'M', "tol_pos_mos" = NULL, "tol_neg_mos" = NULL, "tol_mos_unit" = NULL, "is_active" = true WHERE "tasks_requirements"."id" = 1
+INFO:root:Query time: 0.002
+INFO:root:TOTAL QUERIES: 4
+INFO:root:TOTAL TIME:  0.003
+
+INFO:root:db queries log for <bound method PathView._sync_view of <ninja.operation.PathView object at 0x7fc5125f0ad0>>:
+
+INFO:root:Query: SELECT "tasks_task"."id", "tasks_task"."is_deleted", "tasks_task"."created_at", "tasks_task"."updated_at", "tasks_task"."code", "tasks_task"."description" FROM "tasks_task" WHERE (NOT "tasks_task"."is_deleted" AND "tasks_task"."id" = 4) LIMIT 21
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8" FROM ( SELECT * FROM ( SELECT "tasks_cw"."id" AS "col1", "tasks_cw"."is_deleted" AS "col2", "tasks_cw"."created_at" AS "col3", "tasks_cw"."updated_at" AS "col4", "tasks_cw"."task_id" AS "col5", "tasks_cw"."perform_date" AS "col6", "tasks_cw"."next_due_date" AS "col7", "tasks_cw"."adj_mos" AS "col8", ROW_NUMBER() OVER (PARTITION BY "tasks_cw"."task_id") AS "qual0" FROM "tasks_cw" WHERE (NOT "tasks_cw"."is_deleted" AND "tasks_cw"."task_id" IN (4)) ) "qualify" WHERE ("qual0" > 0 AND "qual0" <= 5) ) "qualify_mask"
+INFO:root:Query time: 0.001
+INFO:root:Query: SELECT "tasks_requirements"."id", "tasks_requirements"."is_deleted", "tasks_requirements"."created_at", "tasks_requirements"."updated_at", "tasks_requirements"."task_id", "tasks_requirements"."due_months", "tasks_requirements"."due_months_unit", "tasks_requirements"."tol_pos_mos", "tasks_requirements"."tol_neg_mos", "tasks_requirements"."tol_mos_unit", "tasks_requirements"."is_active" FROM "tasks_requirements" WHERE ("tasks_requirements"."is_active" AND "tasks_requirements"."task_id" IN (4))
+INFO:root:Query time: 0.000
+INFO:root:TOTAL QUERIES: 3
+INFO:root:TOTAL TIME:  0.002
+

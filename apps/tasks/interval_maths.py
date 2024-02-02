@@ -72,7 +72,7 @@ def cnt_next_due(task_id: int) -> None:
     if not latest_cw:
         return
 
-    if not curr_req:
+    if not curr_req or not curr_req.due_months:
         latest_cw.next_due_date = None
         latest_cw.adj_mos = None
         latest_cw.save()
@@ -89,14 +89,14 @@ def cnt_next_due(task_id: int) -> None:
         count_from = prev_cw.next_due_date
         adjusted = True
 
-    if curr_req.due_months_unit == 'M':
-        latest_cw.next_due_date = count_from + relativedelta(months=curr_req.due_months)
-
-    if curr_req.due_months_unit == 'D':
-        latest_cw.next_due_date = count_from + relativedelta(days=curr_req.due_months)
-
     if not curr_req.due_months > 0:
         latest_cw.next_due_date = None
+
+    elif curr_req.due_months_unit == 'M':
+        latest_cw.next_due_date = count_from + relativedelta(months=curr_req.due_months)
+
+    elif curr_req.due_months_unit == 'D':
+        latest_cw.next_due_date = count_from + relativedelta(days=curr_req.due_months)
 
     latest_cw.save()
 

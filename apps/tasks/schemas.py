@@ -20,7 +20,7 @@ class ComplianceIn(Schema):
 
 class ReqIn(Schema):
     is_active: bool
-    due_months: int = None
+    due_months: int | None = None
     due_months_unit: str | None = None
     tol_pos_mos: float | None = None
     tol_neg_mos: float | None = None
