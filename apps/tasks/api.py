@@ -41,7 +41,7 @@ def api_get_tasks(request):
 
 @router.get("{task_id}/", response=TaskOut)
 def api_get_task(request, task_id: int):
-    pre_cws = Prefetch("compliances", queryset=CW.objects.active()[:5], to_attr="cws")
+    pre_cws = Prefetch("compliances", queryset=CW.objects.active().order_by("perform_date")[:5], to_attr="cws")
     pre_reqs = Prefetch("requirements", queryset=Requirements.objects.filter(is_active=True), to_attr="all_reqs")
     task = BaseModel.get_object_or_404(Task.objects.prefetch_related(pre_cws).prefetch_related(pre_reqs), pk=task_id)
     return task

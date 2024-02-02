@@ -37,7 +37,7 @@ class TolType(models.TextChoices):
     @classmethod
     def provide_choice_types(cls, group_name):
         available_choices = cls.provide_group_choices(group_name)
-        return available_choices.keys()
+        return list(available_choices.keys())
 
 
 class BaseQuerySet(QuerySet):
