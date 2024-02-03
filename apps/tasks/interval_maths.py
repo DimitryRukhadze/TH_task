@@ -1,11 +1,12 @@
-from dateutil.relativedelta import relativedelta
 from datetime import date
 
-from .models import Task, BaseModel, CW, Requirements
+from dateutil.relativedelta import relativedelta
+
+from .models import CW, BaseModel, Requirements, Task
 
 
 def get_prev_cw(task: Task) -> CW | None:
-    active_cws = CW.objects.filter(task=task).order_by("-perform_date")
+    active_cws = CW.objects.filter(task=task).order_by("-perform_date")[:2]
     if len(active_cws) > 1:
         return active_cws[1]
     return
@@ -64,7 +65,7 @@ def check_tol_window(req: Requirements, latest_cw: CW, prev_cw: CW) -> bool:
 
 
 def cnt_next_due(task_id: int) -> None:
-    task = BaseModel.get_object_or_404(Task, pk=task_id)
+    task = Task.objects.active().get(pk=task_id)
     curr_req = task.curr_requirements
     latest_cw = task.compliance
     prev_cw = get_prev_cw(task)
@@ -72,7 +73,7 @@ def cnt_next_due(task_id: int) -> None:
     if not latest_cw:
         return
 
-    if not curr_req or not curr_req.due_months:
+    if not curr_req or not curr_req.due_months or curr_req.due_months == 0:
         latest_cw.next_due_date = None
         latest_cw.adj_mos = None
         latest_cw.save()
@@ -89,10 +90,8 @@ def cnt_next_due(task_id: int) -> None:
         count_from = prev_cw.next_due_date
         adjusted = True
 
-    if not curr_req.due_months > 0:
-        latest_cw.next_due_date = None
 
-    elif curr_req.due_months_unit == 'M':
+    if curr_req.due_months_unit == 'M':
         latest_cw.next_due_date = count_from + relativedelta(months=curr_req.due_months)
 
     elif curr_req.due_months_unit == 'D':

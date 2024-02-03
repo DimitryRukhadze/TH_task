@@ -42,38 +42,30 @@ class ListTaskOut(Schema):
     code: str
     description: str
     compliance: ComplianceOut | None = None
-    requirements: ReqOut | None = None
+    requirement: ReqOut | None = None
 
     @staticmethod
     def resolve_compliance(obj):
-        if not obj.last_compliances:
+        if not obj.compliance_qs:
             return
-        return obj.last_compliances[0]
+        return obj.compliance_qs[0]
 
     @staticmethod
-    def resolve_requirements(obj):
-        if not obj.active_requirements:
+    def resolve_requirement(obj):
+        if not obj.requirement_qs:
             return
-        return obj.active_requirements[0]
+        return obj.requirement_qs[0]
 
 
 class TaskOut(Schema):
     code: str
     description: str
-    task_compliances: list[ComplianceOut] | None = None
-    task_requirements: list[ReqOut] | None = None
+    compliances: list[ComplianceOut] | None = None
+    requirements: list[ReqOut] | None = None
 
     @staticmethod
-    def resolve_task_compliances(obj):
-        if not obj.cws:
-            return
-        return obj.cws
-
-    @staticmethod
-    def resolve_task_requirements(obj):
-        if not obj.all_reqs:
-            return
-        return obj.all_reqs
+    def resolve_compliances(obj):
+        return obj.compliances.active().order_by("-perform_date")[:5]
 
 
 class Error(Schema):
