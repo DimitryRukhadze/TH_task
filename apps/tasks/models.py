@@ -96,8 +96,7 @@ class Task(BaseModel):
     @property
     def curr_requirements(self) -> object | None:
         try:
-            # сохраняется риск получить удаленный requirement
-            return self.requirements.filter(is_active=True).first()
+            return self.requirements.is_active().filter(is_active=True).first()
         except Requirements.DoesNotExist:
             return None
 
@@ -113,11 +112,6 @@ class CW(BaseModel):
         )
     next_due_date = models.DateField("Next due date", blank=True, null=True)
     adj_mos = models.IntegerField("Adjustment", blank=True, null=True)
-
-    # такое делать нельзя! 
-    # а что если мы сначала создали cw, потом удалили (мягко), а потом опять создали?
-    # class Meta:
-    #     unique_together = ("task", "perform_date")
 
     def __str__(self):
         return f"CW for task: {self.task}"

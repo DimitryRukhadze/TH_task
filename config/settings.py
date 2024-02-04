@@ -61,7 +61,7 @@ DATABASES = {
         "USER": "SuperDok",
         "PASSWORD": "testing",
         "HOST": "localhost",
-        "PORT": "5433"
+        "PORT": "5432"
     }
 }
 

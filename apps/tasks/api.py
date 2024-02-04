@@ -2,7 +2,6 @@ from ninja.router import Router
 from ninja.pagination import paginate, LimitOffsetPagination
 
 from django.core.exceptions import ValidationError
-from django.db.models import Prefetch
 from .models import BaseModel, Task, CW, Requirements
 
 from .schemas import (
@@ -45,7 +44,6 @@ def api_get_task(request, task_id: int):
 
 
 @router.post("", response=list[TaskOut])
-@paginate
 def api_create_tasks(request, payload: list[TaskIn]):
     payload = [fields.dict() for fields in payload]
     return create_tasks(payload)
@@ -104,7 +102,7 @@ def api_update_cw(request, task_id, cw_id, payload: ComplianceIn):
     task = BaseModel.get_object_or_404(Task, pk=task_id)
     cw = BaseModel.get_object_or_404(CW, pk=cw_id, task=task)
     try:
-        update_cw(cw, payload)
+        update_cw(task, cw, payload)
     except ValidationError as err:
         return 400, {"message": err.message}
     return 200, None

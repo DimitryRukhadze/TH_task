@@ -5,12 +5,13 @@ from django.core.exceptions import ValidationError
 from django.db.models import QuerySet, Prefetch
 from django.forms.models import model_to_dict
 
-from .schemas import ReqIn, ComplianceIn
+from .schemas import ReqIn, ComplianceIn, TaskIn
 from .models import Task, CW, Requirements, TolType
 from .tasks import update_next_due_date
+from .interval_maths import get_prev_cw
 
 
-def validate_cw_perf_date(perform_date: date, prev_cw: CW) -> None:
+def validate_cw_perf_date(perform_date: date, prev_cw: CW | None) -> None:
     if perform_date > timezone.now().date():
         raise ValidationError(
             f"{perform_date} is in the future"
@@ -34,18 +35,7 @@ def validate_cw_is_latest(cw: CW):
         )
 
 
-
-# мы решили сделать метод проверки существования объекта на уровне BaseModel
-def validate_task_exists(task_pk: int) -> bool:
-    if not Task.objects.active().filter(pk=task_pk).exists():
-        raise ValidationError(
-            f"Task with pk={task_pk} does not exist"
-        )
-
-
 def validate_due_mos_extremes(payload: ReqIn) -> None:
-    # due_months не может быть не int (кроме None) - проверка уже есть на уровне Schema ReqIn
-    # and payload.due_months is not int - лишнее
     if payload.due_months < 0:
         raise ValidationError(
             "due_months should be a valid positive integer"
@@ -96,6 +86,7 @@ def get_tasks() -> QuerySet:
     requirement_qs = Requirements.objects.active().filter(is_active=True)[:1]
     pre_cw = Prefetch("compliances", queryset=compliance_qs, to_attr="compliance_qs")
     pre_req = Prefetch("requirements", queryset=requirement_qs, to_attr='requirement_qs')
+
     return Task.objects.active().prefetch_related(pre_cw).prefetch_related(pre_req).order_by("code", "description")
 
 
@@ -103,11 +94,9 @@ def create_tasks(payload: list[dict]) -> list[Task]:
     return Task.objects.bulk_create([Task(**fields) for fields in payload])
 
 
-def update_task(task: Task, payload: dict) -> Task:
-    # уже в метод передается инстанс таска, 
-    # зачем проверять его на существование после этого?
-    # validate_task_exists(task.pk)
-    for key, value in payload.items():
+def update_task(task: Task, payload: TaskIn) -> Task:
+
+    for key, value in payload.dict(exclude_unset=True).items():
         setattr(task, key, value)
 
     task.save()
@@ -130,33 +119,24 @@ def create_cw(task: Task, payload: ComplianceIn) -> None:
     prev_cw = task.compliance
     validate_cw_perf_date(payload.perform_date, prev_cw)
 
-    cw = CW.objects.create(task=task, perform_date=payload.perform_date)
-
-    # после create save() не нужен !!!!
-    cw.save()
+    CW.objects.create(task=task, perform_date=payload.perform_date)
 
     update_next_due_date.delay(task.pk)
-
-    # договаривались, что возврат не нужен, так как расчет еще не прошел
-    # return cw
 
 
 def get_cws(task: Task) -> QuerySet:
     return CW.objects.active().filter(task=task).order_by("perform_date")
 
 
-def update_cw(cw: CW, payload: ComplianceIn) -> None:
+def update_cw(task: Task, cw: CW, payload: ComplianceIn) -> None:
 
-    validate_cw_perf_date(payload.perform_date)
     validate_cw_is_latest(cw)
+    validate_cw_perf_date(payload.perform_date, prev_cw=get_prev_cw(task))
 
     cw.perform_date = payload.perform_date
     cw.save()
 
     update_next_due_date.delay(cw.task.pk)
-
-    # не надо возвращать cw -> смысл тот же
-    # return cw
 
 
 def delete_cw(cw: CW) -> None:
@@ -185,20 +165,14 @@ def create_req(task: Task, payload: ReqIn) -> Requirements:
         curr_req.save()
 
     req.save()
+
     if task.compliance:
         update_next_due_date.delay(task.pk)
 
     return req
 
 
-# def get_req(task_pk: int, req_pk: int):  # Возможно стоит избавиться вообще!
-#     validate_task_exists(task_pk)
-#     return BaseModel.get_object_or_404(Requirements, pk=req_pk)
-
-
 def update_req(req: Requirements, payload: ReqIn) -> Requirements:
-    # зачем проверять на существование, проверили на уровне api
-    # validate_task_exists(task.pk)
 
     if payload.due_months:
         validate_due_mos_extremes(payload)
@@ -234,4 +208,3 @@ def update_req(req: Requirements, payload: ReqIn) -> Requirements:
 def delete_req(req: Requirements) -> None:
     req.delete()
     update_next_due_date.delay(req.task.pk)
-

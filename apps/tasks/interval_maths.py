@@ -2,7 +2,7 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from .models import CW, BaseModel, Requirements, Task
+from .models import CW, Requirements, Task
 
 
 def get_prev_cw(task: Task) -> CW | None:
@@ -89,7 +89,6 @@ def cnt_next_due(task_id: int) -> None:
     if check_adjustment(latest_cw, prev_cw) and check_tol_window(curr_req, latest_cw, prev_cw):
         count_from = prev_cw.next_due_date
         adjusted = True
-
 
     if curr_req.due_months_unit == 'M':
         latest_cw.next_due_date = count_from + relativedelta(months=curr_req.due_months)
