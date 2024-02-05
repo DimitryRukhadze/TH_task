@@ -12,10 +12,19 @@ def get_prev_cw(task: Task) -> CW | None:
     return
 
 
-def check_adjustment(latest_cw: CW, prev_cw: CW) -> bool:
+def check_adjustment(latest_cw: CW, prev_cw: CW) -> dict:
+    adjusted_axes = {
+        "MOS": None,
+        "HRS": None
+    }
+
     if prev_cw and prev_cw.next_due_date:
-        return prev_cw.next_due_date != latest_cw.perform_date
-    return False
+        adjusted_axes["MOS"] = prev_cw.next_due_date != latest_cw.perform_date
+
+    if prev_cw and prev_cw.next_due_hrs:
+        adjusted_axes["HRS"] = prev_cw.next_due_hrs != latest_cw.perform_hrs
+
+    return adjusted_axes
 
 
 def cnt_mos_adjustment(latest_cw, expected_perf_date) -> int:
@@ -64,6 +73,39 @@ def check_mos_tol_window(req: Requirements, latest_cw: CW, prev_cw: CW) -> bool:
     return
 
 
+def get_hrs_tol_window(mid_hrs, req: Requirements) -> tuple:
+    mid_hrs = float(mid_hrs)
+
+    if req.tol_pos_hrs:
+        pos_hrs = float(req.tol_pos_hrs)
+
+        if req.tol_hrs_unit == "P":
+            pos_hrs = float(req.due_hrs) * (float(req.tol_pos_hrs) / 100)
+
+        tol_pos = mid_hrs + pos_hrs
+    else:
+        tol_pos = mid_hrs
+
+    if req.tol_neg_hrs:
+        neg_hrs = float(req.tol_neg_hrs)
+
+        if req.tol_hrs_unit == "P":
+            neg_hrs = float(req.due_hrs) * (float(req.tol_neg_hrs) / 100)
+
+        tol_neg = mid_hrs - neg_hrs
+    else:
+        tol_neg = mid_hrs
+
+    return tol_pos, tol_neg
+
+
+def check_hrs_tol_window(req: Requirements, latest_cw: CW, prev_cw: CW) -> bool:
+    if req.due_hrs:
+        late, early = get_hrs_tol_window(prev_cw.next_due_hrs, req)
+        return early <= latest_cw.perform_hrs <= late
+    return
+
+
 def cnt_next_due(task_id: int) -> None:
     task = Task.objects.active().get(pk=task_id)
     curr_req = task.curr_requirements
@@ -73,34 +115,46 @@ def cnt_next_due(task_id: int) -> None:
     if not latest_cw:
         return
 
-    if not curr_req or not curr_req.due_months or curr_req.due_months == 0:
+#    if not curr_req or not curr_req.due_months or curr_req.due_months == 0:
+#        latest_cw.next_due_date = None
+#        latest_cw.adj_mos = None
+#        latest_cw.save()
+
+#        return
+    if not curr_req:
         latest_cw.next_due_date = None
+        latest_cw.next_due_hrs = None
         latest_cw.adj_mos = None
+        latest_cw.adj_hrs = None
+
         latest_cw.save()
 
         return
 
-    adjusted = False
-    count_from = latest_cw.perform_date
+    count_from_date = latest_cw.perform_date
+    count_from_hrs = latest_cw.perform_hrs
 
-    if latest_cw.adj_mos:
-        adjusted = True
+    adjusted_axes = check_adjustment(latest_cw, prev_cw)
 
-    if check_adjustment(latest_cw, prev_cw) and check_mos_tol_window(curr_req, latest_cw, prev_cw):
-        count_from = prev_cw.next_due_date
-        adjusted = True
+    if adjusted_axes["MOS"] and check_mos_tol_window(curr_req, latest_cw, prev_cw):
+        count_from_date = prev_cw.next_due_date
+
+    if adjusted_axes["HRS"] and check_hrs_tol_window(curr_req, latest_cw, prev_cw):
+        count_from_hrs = prev_cw.next_due_hrs
 
     if curr_req.due_months_unit == 'M':
-        latest_cw.next_due_date = count_from + relativedelta(months=curr_req.due_months)
+        latest_cw.next_due_date = count_from_date + relativedelta(months=curr_req.due_months)
 
     elif curr_req.due_months_unit == 'D':
-        latest_cw.next_due_date = count_from + relativedelta(days=curr_req.due_months)
+        latest_cw.next_due_date = count_from_date + relativedelta(days=curr_req.due_months)
 
     if curr_req.due_hrs:
-        pass
-#        latest_cw.next_due_hrs = latest_cw.
+        latest_cw.next_due_hrs = count_from_hrs + curr_req.due_hrs
 
     latest_cw.save()
 
-    if adjusted:
-        cnt_mos_adjustment(latest_cw, count_from)
+    if adjusted_axes["MOS"] or latest_cw.adj_mos:
+        cnt_mos_adjustment(latest_cw, count_from_date)
+
+#    if adjusted_axes["HRS"] or latest_cw.adj_hrs:
+#        pass

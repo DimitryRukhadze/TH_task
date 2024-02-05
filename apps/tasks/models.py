@@ -98,7 +98,7 @@ class Task(BaseModel):
     @property
     def curr_requirements(self) -> object | None:
         try:
-            return self.requirements.is_active().filter(is_active=True).first()
+            return self.requirements.active().filter(is_active=True).first()
         except Requirements.DoesNotExist:
             return None
 

@@ -52,7 +52,7 @@ def api_create_tasks(request, payload: list[TaskIn]):
 @router.put("{task_id}/", response=TaskOut)
 def api_update_task(request, task_id: int, payload: TaskIn):
     task = BaseModel.get_object_or_404(Task, pk=task_id)
-    return update_task(task, payload.dict())
+    return update_task(task, payload)
 
 
 @router.delete("{task_id}/")

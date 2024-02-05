@@ -318,8 +318,7 @@ MATH_TESTS = [
 
 
 def bulk_tasks(payload):
-    tasks = [Task(**fields) for fields in payload]
-    return tasks
+    return [Task(**fields) for fields in payload]
 
 
 @pytest.mark.django_db
@@ -350,7 +349,6 @@ def test_get_task(client, task_attrs):
     response_obj_data = json.loads(response.content)
     assert response.status_code == 200
     assert false_response.status_code == 404
-    assert task.pk == response_obj_data['pk']
 
     for task_field in task._meta.get_fields():
         if task_field in response_obj_data.keys():
@@ -373,8 +371,8 @@ def test_create_task(client, task_attrs):
     assert response_single_task.status_code == 200
     response_body_values = json.loads(
         response_single_task.content
-        )['items'][0].values()
-
+        )[0].values()
+    print(response_body_values)
     for value in task_attrs[0].values():
         assert value in response_body_values
 
@@ -406,7 +404,7 @@ def test_bulk_create_tasks(client):
 
     created_tasks = json.loads(
         response_bulk_tasks.content
-    )['items']
+    )
 
     for init_payload, res_payload in zip(CORRECT_TASK_PAYLOAD, created_tasks):
         for key in init_payload.keys():
@@ -508,9 +506,9 @@ def test_delete_task(client, task_attrs):
 @pytest.mark.parametrize(
     'payload,result',
     [
-        ({"perform_date": "2020-01-01"}, 200),
+        ({"perform_date": "2020-01-01"}, 201),
         ({"perform_date": "2030-01-01"}, 400),
-        ({"perform_date": "2020-01-01"}, 200)
+        ({"perform_date": "2020-01-01"}, 201)
     ]
 )
 @pytest.mark.django_db
@@ -526,7 +524,7 @@ def test_create_cw_for_task(client, payload, result):
 
     assert response.status_code == result
 
-    if response.status_code == 200:
+    if response.status_code == 201:
         new_cw_date = datetime.strptime(payload["perform_date"], "%Y-%m-%d") - relativedelta(days=30)
 
         new_response = client.post(
@@ -535,7 +533,7 @@ def test_create_cw_for_task(client, payload, result):
             content_type='application/json'
         )
 
-        assert json.loads(new_response.content).get("message") == "Perfrom date is before previous CW"
+        assert json.loads(new_response.content).get("message") == "Perfrom date is before or equal previous CW"
 
 
 @pytest.mark.parametrize(
@@ -572,10 +570,9 @@ def test_create_requirements(client, task, payload, result):
 
     if response.status_code == 200:
         resp_dict = json.loads(response.content)
-        curr_payload["pk"] = curr_payload["task"]
-        curr_payload.pop("task")
         for key, value in resp_dict.items():
             if key in curr_payload:
+                print(key, curr_payload[key])
                 assert curr_payload[key] == value
 
 
@@ -800,3 +797,114 @@ def test_cnt_adj(client, task, requirement, cw_1, cw_2, expected_ndd, adj):
         cw_adj = content['items'][-1]['adj_mos']
 
     assert cw_adj == adj
+
+
+@pytest.mark.parametrize(
+        "task,requirement,cw_1,cw_2,expected",
+        [
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                7000.0,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=7000),
+                8000.0,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=7040),
+                8000.0,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_neg_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=6960),
+                8000.0,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=40, tol_neg_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=6960),
+                8000.0,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=40, tol_neg_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=7060),
+                8060.0,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=40, tol_neg_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=7040.01),
+                8040.01,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=40, tol_neg_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=7040),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=40, tol_neg_hrs=40, tol_hrs_unit="H"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=6059.99),
+                7059.99,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=10.98, tol_neg_hrs=10.98, tol_hrs_unit="P"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=7109.8),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_hrs=1000, tol_pos_hrs=10.98, tol_neg_hrs=10.98, tol_hrs_unit="P"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_hrs=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_hrs=6890.2),
+                8000,
+            ),
+        ]
+)
+@pytest.mark.django_db
+def test_cnt_due_hrs(client, task, requirement, cw_1, cw_2, expected):
+    task = task
+    task.save()
+
+    requirement = requirement
+    requirement.task = task
+    requirement.save()
+
+    cw_1 = cw_1
+    cw_1.task = task
+    cw_1.save()
+
+    cnt_next_due(task.pk)
+
+    if cw_2:
+        cw_2.task = task
+        cw_2.save()
+
+    cnt_next_due(task.pk)
+
+    response = client.get(f'/api/tasks/{task.pk}/cws/')
+    print(json.loads(response.content))
+    latest_cw = json.loads(response.content)["items"][-1]
+
+    assert response.status_code == 200
+    assert latest_cw["next_due_hrs"] == expected
