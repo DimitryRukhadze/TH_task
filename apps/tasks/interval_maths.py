@@ -6,7 +6,7 @@ from .models import CW, Requirements, Task
 
 
 def get_prev_cw(task: Task) -> CW | None:
-    active_cws = CW.objects.filter(task=task).order_by("-perform_date")[:2]
+    active_cws = CW.objects.active().filter(task=task).order_by("-perform_date")[:2]
     if len(active_cws) > 1:
         return active_cws[1]
     return
@@ -18,7 +18,7 @@ def check_adjustment(latest_cw: CW, prev_cw: CW) -> bool:
     return False
 
 
-def cnt_adjustment(latest_cw, expected_perf_date) -> int:
+def cnt_mos_adjustment(latest_cw, expected_perf_date) -> int:
 
     expected_interval = latest_cw.next_due_date - expected_perf_date
     fact_interval = latest_cw.next_due_date - latest_cw.perform_date
@@ -57,7 +57,7 @@ def get_mos_tol_window(mid_date: date, req: Requirements) -> tuple:
     return tol_pos, tol_neg
 
 
-def check_tol_window(req: Requirements, latest_cw: CW, prev_cw: CW) -> bool:
+def check_mos_tol_window(req: Requirements, latest_cw: CW, prev_cw: CW) -> bool:
     if req.due_months_unit:
         late, early = get_mos_tol_window(prev_cw.next_due_date, req)
         return early <= latest_cw.perform_date <= late
@@ -86,7 +86,7 @@ def cnt_next_due(task_id: int) -> None:
     if latest_cw.adj_mos:
         adjusted = True
 
-    if check_adjustment(latest_cw, prev_cw) and check_tol_window(curr_req, latest_cw, prev_cw):
+    if check_adjustment(latest_cw, prev_cw) and check_mos_tol_window(curr_req, latest_cw, prev_cw):
         count_from = prev_cw.next_due_date
         adjusted = True
 
@@ -96,7 +96,11 @@ def cnt_next_due(task_id: int) -> None:
     elif curr_req.due_months_unit == 'D':
         latest_cw.next_due_date = count_from + relativedelta(days=curr_req.due_months)
 
+    if curr_req.due_hrs:
+        pass
+#        latest_cw.next_due_hrs = latest_cw.
+
     latest_cw.save()
 
     if adjusted:
-        cnt_adjustment(latest_cw, count_from)
+        cnt_mos_adjustment(latest_cw, count_from)
