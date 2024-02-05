@@ -6,9 +6,10 @@ from django.core.validators import MinLengthValidator
 
 
 class UnitType(models.TextChoices):
-    MONTHS = 'M'
-    DAYS = 'D'
-    PERCENTS = 'P'
+    MONTHS = "M"
+    DAYS = "D"
+    PERCENTS = "P"
+    HOURS = "H"
 
     @classmethod
     def provide_group_choices(cls, group_name):
@@ -21,6 +22,10 @@ class UnitType(models.TextChoices):
                 cls.MONTHS: "Months",
                 cls.DAYS: "Days",
                 cls.PERCENTS: "Percents"
+            },
+            "HRS_UNIT": {
+                cls.HOURS: "Hours",
+                cls.PERCENTS: "Percents"
             }
         }
 
@@ -29,10 +34,7 @@ class UnitType(models.TextChoices):
     @classmethod
     def group_choices(cls, group_name):
         available_choices = cls.provide_group_choices(group_name)
-        return [
-            (choice, name)
-            for choice, name in available_choices.items()
-        ]
+        return list(available_choices.items())
 
     @classmethod
     def provide_choice_types(cls, group_name):
@@ -131,8 +133,17 @@ class Requirements(BaseModel):
         null=True
     )
     due_months_unit = models.CharField(
+        "Due months unit",
         max_length=1,
         choices=UnitType.group_choices("DUE_UNIT"),
+        blank=True,
+        null=True
+    )
+
+    due_hrs = models.DecimalField(
+        "Due hrs",
+        max_digits=8,
+        decimal_places=2,
         blank=True,
         null=True
     )
@@ -158,7 +169,27 @@ class Requirements(BaseModel):
         blank=True,
         null=True
     )
-
+    tol_pos_hrs = models.DecimalField(
+        "HRS positive",
+        max_digits=7,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    tol_neg_hrs = models.DecimalField(
+        "HRS negative",
+        max_digits=7,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+    tol_hrs_unit = models.CharField(
+        "HRS unit",
+        choices=UnitType.group_choices("HRS_UNIT"),
+        max_length=1,
+        blank=True,
+        null=True
+    )
     is_active = models.BooleanField("active_tolerance")
 
     def __str__(self):
