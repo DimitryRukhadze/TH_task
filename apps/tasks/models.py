@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.core.validators import MinLengthValidator
 
 
-class TolType(models.TextChoices):
+class UnitType(models.TextChoices):
     MONTHS = 'M'
     DAYS = 'D'
     PERCENTS = 'P'
@@ -132,7 +132,7 @@ class Requirements(BaseModel):
     )
     due_months_unit = models.CharField(
         max_length=1,
-        choices=TolType.group_choices("DUE_UNIT"),
+        choices=UnitType.group_choices("DUE_UNIT"),
         blank=True,
         null=True
     )
@@ -153,7 +153,7 @@ class Requirements(BaseModel):
     )
     tol_mos_unit = models.CharField(
         "MOS unit",
-        choices=TolType.group_choices("MOS_UNIT"),
+        choices=UnitType.group_choices("MOS_UNIT"),
         max_length=1,
         blank=True,
         null=True

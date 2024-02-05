@@ -6,7 +6,7 @@ from django.db.models import QuerySet, Prefetch
 from django.forms.models import model_to_dict
 
 from .schemas import ReqIn, ComplianceIn, TaskIn
-from .models import Task, CW, Requirements, TolType
+from .models import Task, CW, Requirements, UnitType
 from .tasks import update_next_due_date
 from .interval_maths import get_prev_cw
 
@@ -57,7 +57,7 @@ def validate_dues(payload: ReqIn) -> None:
             "Can not create due months without unit"
         )
 
-    if payload.due_months_unit not in TolType.provide_choice_types("DUE_UNIT"):
+    if payload.due_months_unit not in UnitType.provide_choice_types("DUE_UNIT"):
         raise ValidationError(
             f"No {payload.due_months_unit} due months type"
         )
@@ -75,7 +75,7 @@ def validate_tol_units(payload: ReqIn):
             "Can not create Tolerance without values"
         )
 
-    if payload.tol_mos_unit and payload.tol_mos_unit not in TolType.provide_choice_types("MOS_UNIT"):
+    if payload.tol_mos_unit and payload.tol_mos_unit not in UnitType.provide_choice_types("MOS_UNIT"):
         raise ValidationError(
             f"No {payload.tol_mos_unit} tolerance type"
         )
