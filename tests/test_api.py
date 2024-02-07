@@ -566,6 +566,8 @@ def test_create_requirements(client, task, payload, result):
         content_type='application/json'
     )
 
+    print(json.loads(response.content))
+
     assert response.status_code == result
 
     if response.status_code == 200:

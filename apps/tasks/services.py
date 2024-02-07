@@ -48,16 +48,16 @@ def validate_due_mos_extremes(payload: ReqIn) -> None:
 
 
 def validate_dues(payload: ReqIn) -> None:
-    if not payload.due_months:
+    if not payload.due_months and not payload.due_hrs:
         raise ValidationError(
             "Can not create Requirements without dues"
         )
-    if not payload.due_months_unit:
+    if payload.due_months and not payload.due_months_unit:
         raise ValidationError(
             "Can not create due months without unit"
         )
 
-    if payload.due_months_unit not in UnitType.provide_choice_types("DUE_UNIT"):
+    if payload.due_months_unit and payload.due_months_unit not in UnitType.provide_choice_types("DUE_UNIT"):
         raise ValidationError(
             f"No {payload.due_months_unit} due months type"
         )
@@ -65,20 +65,32 @@ def validate_dues(payload: ReqIn) -> None:
 
 
 def validate_tol_units(payload: ReqIn):
-    if (payload.tol_pos_mos or payload.tol_neg_mos) and not payload.tol_mos_unit:
-        raise ValidationError(
+    no_units = ValidationError(
             'No unit for tolerances'
         )
-
-    if payload.tol_mos_unit and (not payload.tol_pos_mos and not payload.tol_neg_mos):
-        raise ValidationError(
+    no_values = ValidationError(
             "Can not create Tolerance without values"
         )
-
-    if payload.tol_mos_unit and payload.tol_mos_unit not in UnitType.provide_choice_types("MOS_UNIT"):
-        raise ValidationError(
+    wrong_tol_type = ValidationError(
             f"No {payload.tol_mos_unit} tolerance type"
         )
+    if (payload.tol_pos_mos or payload.tol_neg_mos) and not payload.tol_mos_unit:
+        raise no_units
+
+    if (payload.tol_pos_hrs or payload.tol_neg_hrs) and not payload.tol_hrs_unit:
+        raise no_units
+
+    if payload.tol_mos_unit and (not payload.tol_pos_mos and not payload.tol_neg_mos):
+        raise no_values
+
+    if payload.tol_hrs_unit and (not payload.tol_pos_hrs and not payload.tol_neg_hrs):
+        raise no_values
+
+    if payload.tol_mos_unit and payload.tol_mos_unit not in UnitType.provide_choice_types("MOS_UNIT"):
+        raise wrong_tol_type
+
+    if payload.tol_hrs_unit and payload.tol_hrs_unit not in UnitType.provide_choice_types("HRS_UNIT"):
+        raise wrong_tol_type
 
 
 def get_tasks() -> QuerySet:

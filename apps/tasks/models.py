@@ -10,6 +10,7 @@ class UnitType(models.TextChoices):
     DAYS = "D"
     PERCENTS = "P"
     HOURS = "H"
+    CYCLES = "C"
 
     @classmethod
     def provide_group_choices(cls, group_name):
@@ -25,6 +26,10 @@ class UnitType(models.TextChoices):
             },
             "HRS_UNIT": {
                 cls.HOURS: "Hours",
+                cls.PERCENTS: "Percents"
+            },
+            "CYC_UNIT": {
+                cls.CYCLES: "Cycles",
                 cls.PERCENTS: "Percents"
             }
         }
@@ -145,9 +150,15 @@ class Requirements(BaseModel):
     )
 
     due_hrs = models.DecimalField(
-        "Due hrs",
+        "Due hours",
         max_digits=8,
         decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    due_cyc = models.IntegerField(
+        "Due cycles",
         blank=True,
         null=True
     )
@@ -166,6 +177,7 @@ class Requirements(BaseModel):
         blank=True,
         null=True
     )
+
     tol_mos_unit = models.CharField(
         "MOS unit",
         choices=UnitType.group_choices("MOS_UNIT"),
@@ -188,12 +200,37 @@ class Requirements(BaseModel):
         null=True
     )
     tol_hrs_unit = models.CharField(
-        "HRS unit",
+        "HRS tol unit",
         choices=UnitType.group_choices("HRS_UNIT"),
         max_length=1,
         blank=True,
         null=True
     )
+
+    tol_pos_cyc = models.DecimalField(
+        "CYC positive",
+        max_digits=7,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    tol_neg_cyc = models.DecimalField(
+        "CYC negative",
+        max_digits=7,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    tol_cyc_unit = models.CharField(
+        "CYC tol unit",
+        choices=UnitType.group_choices("CYC_UNIT"),
+        max_length=1,
+        blank=True,
+        null=True
+    )
+
     is_active = models.BooleanField("active_tolerance")
 
     def __str__(self):
