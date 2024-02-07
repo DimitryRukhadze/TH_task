@@ -11,8 +11,10 @@ class ComplianceOut(Schema):
     pk: int
     perform_date: date
     perform_hrs: float | None
+    perform_cyc: int | None
     next_due_date: date | None = None
     next_due_hrs: float | None
+    next_due_cyc: int | None
     adj_mos: int | None
     adj_hrs: float | None
 
@@ -20,6 +22,7 @@ class ComplianceOut(Schema):
 class ComplianceIn(Schema):
     perform_date: date
     perform_hrs: float | None = None
+    perform_cyc: int | None = None
 
 
 class ReqIn(Schema):
@@ -27,12 +30,16 @@ class ReqIn(Schema):
     due_months: int | None = None
     due_months_unit: str | None = None
     due_hrs: float | None = None
+    due_cyc: int | None = None
     tol_pos_mos: float | None = None
     tol_neg_mos: float | None = None
     tol_mos_unit: str | None = None
     tol_pos_hrs: float | None = None
     tol_neg_hrs: float | None = None
     tol_hrs_unit: str | None = None
+    tol_pos_cyc: float | None = None
+    tol_neg_cyc: float | None = None
+    tol_cyc_unit: str | None = None
 
 
 class ReqOut(Schema):
@@ -41,12 +48,16 @@ class ReqOut(Schema):
     due_months: int | None = None
     due_months_unit: str | None = None
     due_hrs: float | None = None
+    due_cyc: int | None = None
     tol_pos_mos: float | None = None
     tol_neg_mos: float | None = None
     tol_mos_unit: str | None = None
     tol_pos_hrs: float | None = None
     tol_neg_hrs: float | None = None
     tol_hrs_unit: str | None = None
+    tol_pos_cyc: float | None = None
+    tol_neg_cyc: float | None = None
+    tol_cyc_unit: str | None = None
 
 
 class ListTaskOut(Schema):
