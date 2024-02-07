@@ -118,11 +118,14 @@ class CW(BaseModel):
         "Perform date",
         )
     perform_hrs = models.DecimalField("Perform hours", max_digits=8, decimal_places=2, blank=True, null=True)
+    perform_cyc = models.IntegerField("Perform cycles", blank=True, null=True)
 
     next_due_date = models.DateField("Next due date", blank=True, null=True)
     next_due_hrs = models.DecimalField("Next due hrs", max_digits=8, decimal_places=2, blank=True, null=True)
+    next_due_cyc = models.IntegerField("Next due cycles", blank=True, null=True)
     adj_mos = models.IntegerField("Adjustment_months", blank=True, null=True)
     adj_hrs = models.DecimalField("Adjustment_hours", max_digits=8, decimal_places=2, blank=True, null=True)
+    adj_cyc = models.IntegerField("Adjustment cycles", blank=True, null=True)
 
     def __str__(self):
         return f"CW for task: {self.task}"
