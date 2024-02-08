@@ -1,4 +1,5 @@
-from datetime import date
+from decimal import Decimal
+
 
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -40,7 +41,7 @@ def validate_cw_perf_cyc(payload: ComplianceIn, prev_cw: CW, req: Requirements) 
 
     if req and req.due_cyc and payload.perform_cyc is None:
         raise ValidationError(
-            "Can't create no CYC cw with previous CYC"
+            "Can't create no CYC cw with CYC dues"
         )
 
 
@@ -68,24 +69,12 @@ def validate_cw_is_latest(cw: CW):
         )
 
 
-def validate_due_mos_extremes(payload: ReqIn) -> None:
-    if payload.due_months:
-        if payload.due_months < 0:
-            raise ValidationError(
-                "due_months should be a valid positive integer"
-            )
-
-        if payload.due_months > 27375:  # 27375 days = 75 years
-            raise ValidationError(
-                "Due months exceeds max aircraft lifespan"
-            )
-
-
 def validate_dues(payload: ReqIn) -> None:
     if not payload.due_months and not payload.due_hrs and not payload.due_cyc:
         raise ValidationError(
             "Can not create Requirements without dues"
         )
+
     if payload.due_months and not payload.due_months_unit:
         raise ValidationError(
             "Can not create due months without unit"
@@ -95,7 +84,44 @@ def validate_dues(payload: ReqIn) -> None:
         raise ValidationError(
             f"No {payload.due_months_unit} due months type"
         )
-    validate_due_mos_extremes(payload)
+
+    if payload.due_months is not None:
+        if payload.due_months > 27375:  # 27375 days = 75 years
+            raise ValidationError(
+                "Due months exceeds max aircraft lifespan"
+            )
+        if payload.due_months < 1:
+            raise ValidationError(
+                "MOS must be greater then 0"
+            )
+
+    if payload.due_hrs is not None:
+        if payload.due_hrs > 1000000:
+            raise ValidationError(
+                "HRS number too large"
+            )
+
+        if payload.due_hrs < 0.01:
+            raise ValidationError(
+                "HRS due must be greater than 0"
+            )
+
+    if payload.due_cyc is not None:
+        if payload.due_cyc > 1000000:
+            raise ValidationError(
+                "CYC number too large"
+            )
+        if payload.due_cyc < 1:
+            raise ValidationError(
+                "CYC must be greater then 0"
+            )
+
+
+def validate_tol_value(tol: Decimal):
+    if tol < 0:
+        raise ValidationError(
+            "Tolerance must be a positive number"
+        )
 
 
 def validate_tol_units(payload: ReqIn):
@@ -108,10 +134,14 @@ def validate_tol_units(payload: ReqIn):
     wrong_tol_type = ValidationError(
             f"No {payload.tol_mos_unit} tolerance type"
         )
+
     if (payload.tol_pos_mos or payload.tol_neg_mos) and not payload.tol_mos_unit:
         raise no_units
 
     if (payload.tol_pos_hrs or payload.tol_neg_hrs) and not payload.tol_hrs_unit:
+        raise no_units
+
+    if (payload.tol_pos_cyc or payload.tol_neg_cyc) and not payload.tol_cyc_unit:
         raise no_units
 
     if payload.tol_mos_unit and (not payload.tol_pos_mos and not payload.tol_neg_mos):
@@ -120,11 +150,30 @@ def validate_tol_units(payload: ReqIn):
     if payload.tol_hrs_unit and (not payload.tol_pos_hrs and not payload.tol_neg_hrs):
         raise no_values
 
+    if payload.tol_cyc_unit and (not payload.tol_pos_cyc and not payload.tol_neg_cyc):
+        raise no_values
+
     if payload.tol_mos_unit and payload.tol_mos_unit not in UnitType.provide_choice_types("MOS_UNIT"):
         raise wrong_tol_type
 
     if payload.tol_hrs_unit and payload.tol_hrs_unit not in UnitType.provide_choice_types("HRS_UNIT"):
         raise wrong_tol_type
+
+    if payload.tol_hrs_unit and payload.tol_hrs_unit not in UnitType.provide_choice_types("CYC_UNIT"):
+        raise wrong_tol_type
+
+    if payload.tol_pos_mos:
+        validate_tol_value(payload.tol_pos_mos)
+    if payload.tol_neg_mos:
+        validate_tol_value(payload.tol_neg_mos)
+    if payload.tol_pos_hrs:
+        validate_tol_value(payload.tol_pos_hrs)
+    if payload.tol_neg_hrs:
+        validate_tol_value(payload.tol_neg_hrs)
+    if payload.tol_pos_cyc:
+        validate_tol_value(payload.tol_pos_cyc)
+    if payload.tol_neg_cyc:
+        validate_tol_value(payload.tol_neg_cyc)
 
 
 def get_tasks() -> QuerySet:
@@ -246,8 +295,8 @@ def create_req(task: Task, payload: ReqIn) -> Requirements:
 
 def update_req(req: Requirements, payload: ReqIn) -> Requirements:
 
-    if payload.due_months:
-        validate_due_mos_extremes(payload)
+    validate_dues(payload)
+    validate_tol_units(payload)
 
     if req.is_active is False and payload.is_active:
         if curr_req := req.task.curr_requirements:
