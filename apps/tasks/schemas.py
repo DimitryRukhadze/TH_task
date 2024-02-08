@@ -12,7 +12,7 @@ class ComplianceOut(Schema):
     perform_date: date
     perform_hrs: float | None
     perform_cyc: int | None
-    next_due_date: date | None = None
+    next_due_date: date | None
     next_due_hrs: float | None
     next_due_cyc: int | None
     adj_mos: int | None

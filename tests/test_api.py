@@ -910,3 +910,128 @@ def test_cnt_due_hrs(client, task, requirement, cw_1, cw_2, expected):
 
     assert response.status_code == 200
     assert latest_cw["next_due_hrs"] == expected
+
+
+@pytest.mark.parametrize(
+        "task,requirement,cw_1,cw_2,expected",
+        [
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                7000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7000),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7040),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_neg_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=6960),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=40, tol_neg_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=6960),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=40, tol_neg_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7060),
+                8060,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=40, tol_neg_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7041),
+                8041,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=40, tol_neg_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7040),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=40, tol_neg_cyc=40, tol_cyc_unit="C"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=6059),
+                7059,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=10.98, tol_neg_cyc=10.98, tol_cyc_unit="P"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7110),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=10.98, tol_neg_cyc=10.98, tol_cyc_unit="P"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=6890),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=10.12, tol_neg_cyc=10.12, tol_cyc_unit="P"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=7101),
+                8000,
+            ),
+            (
+                Task(code='00-IJM-001', description='long_str'),
+                Requirements(is_active=True, due_cyc=1000, tol_pos_cyc=10.12, tol_neg_cyc=10.12, tol_cyc_unit="P"),
+                CW(perform_date=datetime.strptime("2019-01-01", "%Y-%m-%d"), perform_cyc=6000),
+                CW(perform_date=datetime.strptime("2020-01-01", "%Y-%m-%d"), perform_cyc=6899),
+                8000,
+            ),
+
+        ]
+)
+@pytest.mark.django_db
+def test_cnt_due_cyc(client, task, requirement, cw_1, cw_2, expected):
+    task = task
+    task.save()
+
+    requirement = requirement
+    requirement.task = task
+    requirement.save()
+
+    cw_1 = cw_1
+    cw_1.task = task
+    cw_1.save()
+
+    cnt_next_due(task.pk)
+
+    if cw_2:
+        cw_2.task = task
+        cw_2.save()
+
+    cnt_next_due(task.pk)
+
+    response = client.get(f'/api/tasks/{task.pk}/cws/')
+    latest_cw = json.loads(response.content)["items"][-1]
+
+    assert response.status_code == 200
+    assert latest_cw["next_due_cyc"] == expected
