@@ -90,6 +90,10 @@ class TaskOut(Schema):
     def resolve_compliances(obj):
         return obj.compliances.active().order_by("-perform_date")[:5]
 
+    @staticmethod
+    def resolve_requirements(obj):
+        return obj.requirements.active().order_by("created_at")
+
 
 class Error(Schema):
     message: str

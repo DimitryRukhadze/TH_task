@@ -11,20 +11,53 @@ from .tasks import update_next_due_date
 from .interval_maths import get_prev_cw
 
 
-def validate_cw_perf_date(perform_date: date, prev_cw: CW | None) -> None:
-    if perform_date > timezone.now().date():
+def validate_cw_perf_hrs(payload: ComplianceIn, prev_cw: CW, req: Requirements) -> None:
+    if payload.perform_hrs > 1000000:
         raise ValidationError(
-            f"{perform_date} is in the future"
+            "Performance HRS too large"
+        )
+    if payload.perform_hrs < 0:
+        raise ValidationError(
+            "Can't create negative HRS"
         )
 
-    if prev_cw and prev_cw.perform_date >= perform_date:
+    if req and req.due_hrs and payload.perform_hrs is None:
         raise ValidationError(
-            "Perfrom date is before or equal previous CW"
+            "Can't create no HRS cw with HRS due"
         )
 
-    if perform_date.year <= 1990:
+    if prev_cw and prev_cw.perform_hrs and prev_cw.perform_hrs > payload.perform_hrs:
+        raise ValidationError(
+            "Performance hours is before previous CW"
+        )
+
+
+def validate_cw_perf_cyc(payload: ComplianceIn, prev_cw: CW, req: Requirements) -> None:
+    if prev_cw and prev_cw.perform_cyc and prev_cw.perform_cyc > payload.perform_cyc:
+        raise ValidationError(
+            "Performance cycles is before previous CW"
+        )
+
+    if req and req.due_cyc and payload.perform_cyc is None:
+        raise ValidationError(
+            "Can't create no CYC cw with previous CYC"
+        )
+
+
+def validate_cw_perform_date(payload: ComplianceIn, prev_cw: CW | None) -> None:
+    if payload.perform_date > timezone.now().date():
+        raise ValidationError(
+            f"{payload.perform_date} is in the future"
+        )
+
+    if payload.perform_date.year <= 1990:
         raise ValidationError(
             "Invaild CW year. Too old."
+        )
+
+    if prev_cw and prev_cw.perform_date >= payload.perform_date:
+        raise ValidationError(
+            "Performance date is before or equal previous CW"
         )
 
 
@@ -36,19 +69,20 @@ def validate_cw_is_latest(cw: CW):
 
 
 def validate_due_mos_extremes(payload: ReqIn) -> None:
-    if payload.due_months < 0:
-        raise ValidationError(
-            "due_months should be a valid positive integer"
-        )
+    if payload.due_months:
+        if payload.due_months < 0:
+            raise ValidationError(
+                "due_months should be a valid positive integer"
+            )
 
-    if payload.due_months > 27375:  # 27375 days = 75 years
-        raise ValidationError(
-            "Due months exceeds max aircraft lifespan"
-        )
+        if payload.due_months > 27375:  # 27375 days = 75 years
+            raise ValidationError(
+                "Due months exceeds max aircraft lifespan"
+            )
 
 
 def validate_dues(payload: ReqIn) -> None:
-    if not payload.due_months and not payload.due_hrs:
+    if not payload.due_months and not payload.due_hrs and not payload.due_cyc:
         raise ValidationError(
             "Can not create Requirements without dues"
         )
@@ -129,9 +163,20 @@ def delete_task(task: Task):
 
 def create_cw(task: Task, payload: ComplianceIn) -> None:
     prev_cw = task.compliance
-    validate_cw_perf_date(payload.perform_date, prev_cw)
+    curr_req = task.curr_requirements
+    validate_cw_perform_date(payload, prev_cw)
 
-    CW.objects.create(task=task, perform_date=payload.perform_date)
+    if payload.perform_hrs:
+        validate_cw_perf_hrs(payload, prev_cw, curr_req)
+    if payload.perform_cyc:
+        validate_cw_perf_cyc(payload, prev_cw, curr_req)
+
+    CW.objects.create(
+        task=task,
+        perform_date=payload.perform_date,
+        perform_hrs=payload.perform_hrs,
+        perform_cyc=payload.perform_cyc
+    )
 
     update_next_due_date.delay(task.pk)
 
@@ -141,9 +186,16 @@ def get_cws(task: Task) -> QuerySet:
 
 
 def update_cw(task: Task, cw: CW, payload: ComplianceIn) -> None:
+    curr_req = task.curr_requirements
+    prev_cw = get_prev_cw(task)
 
     validate_cw_is_latest(cw)
-    validate_cw_perf_date(payload.perform_date, prev_cw=get_prev_cw(task))
+    validate_cw_perform_date(payload, prev_cw)
+
+    if payload.perform_hrs:
+        validate_cw_perf_hrs(payload, prev_cw, curr_req)
+    if payload.perform_cyc:
+        validate_cw_perf_cyc(payload, prev_cw, curr_req)
 
     cw.perform_date = payload.perform_date
     cw.save()
@@ -165,9 +217,17 @@ def create_req(task: Task, payload: ReqIn) -> Requirements:
         task=task,
         due_months=payload.due_months,
         due_months_unit=payload.due_months_unit,
+        due_hrs=payload.due_hrs,
+        due_cyc=payload.due_cyc,
         tol_pos_mos=payload.tol_pos_mos,
         tol_neg_mos=payload.tol_neg_mos,
         tol_mos_unit=payload.tol_mos_unit,
+        tol_pos_hrs=payload.tol_pos_hrs,
+        tol_neg_hrs=payload.tol_neg_hrs,
+        tol_hrs_unit=payload.tol_hrs_unit,
+        tol_pos_cyc=payload.tol_pos_cyc,
+        tol_neg_cyc=payload.tol_neg_cyc,
+        tol_cyc_unit=payload.tol_cyc_unit,
         is_active=payload.is_active
     )
 

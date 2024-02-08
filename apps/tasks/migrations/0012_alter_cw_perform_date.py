@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cw',
             name='perform_date',
-            field=models.DateField(validators=[apps.tasks.services.validate_cw_perf_date], verbose_name='Perform date'),
+            field=models.DateField(validators=[apps.tasks.services.validate_cw_perform_date], verbose_name='Perform date'),
         ),
     ]
