@@ -533,7 +533,7 @@ def test_create_cw_for_task(client, payload, result):
             content_type='application/json'
         )
 
-        assert json.loads(new_response.content).get("message") == "Perfrom date is before or equal previous CW"
+        assert json.loads(new_response.content).get("message") == "Performance date is before or equal previous CW"
 
 
 @pytest.mark.parametrize(
@@ -573,6 +573,7 @@ def test_create_requirements(client, task, payload, result):
     if response.status_code == 200:
         resp_dict = json.loads(response.content)
         for key, value in resp_dict.items():
+            print(type(value))
             if key in curr_payload:
                 print(key, curr_payload[key])
                 assert curr_payload[key] == value
@@ -684,6 +685,7 @@ def test_update_requirements(client, task, requirement_1, requirement_2, payload
     response_1 = client.get(
         f'/api/tasks/{task.pk}/requirements/{req_1.pk}/'
     )
+    print(json.loads(response_2.content))
     assert response_2.status_code == result
 
     updated_contents_1 = json.loads(response_1.content)

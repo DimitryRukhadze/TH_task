@@ -144,6 +144,10 @@ def validate_tol_units(payload: ReqIn):
             f"No {payload.tol_mos_unit} tolerance type"
         )
 
+    no_due = ValidationError(
+        "No due for tolerance"
+    )
+
     if (payload.tol_pos_mos or payload.tol_neg_mos) and not payload.tol_mos_unit:
         raise no_units
 
@@ -168,8 +172,17 @@ def validate_tol_units(payload: ReqIn):
     if payload.tol_hrs_unit and payload.tol_hrs_unit not in UnitType.provide_choice_types("HRS_UNIT"):
         raise wrong_tol_type
 
-    if payload.tol_hrs_unit and payload.tol_hrs_unit not in UnitType.provide_choice_types("CYC_UNIT"):
+    if payload.tol_cyc_unit and payload.tol_cyc_unit not in UnitType.provide_choice_types("CYC_UNIT"):
         raise wrong_tol_type
+
+    if not payload.due_months and (payload.tol_pos_mos or payload.tol_neg_mos):
+        raise no_due
+
+    if not payload.due_hrs and (payload.tol_pos_hrs or payload.tol_neg_hrs):
+        raise no_due
+
+    if not payload.due_cyc and (payload.tol_pos_cyc or payload.tol_neg_cyc):
+        raise no_due
 
     if payload.tol_pos_mos:
         validate_tol_value(payload.tol_pos_mos)
@@ -224,9 +237,9 @@ def create_cw(task: Task, payload: ComplianceIn) -> None:
     curr_req = task.curr_requirements
     validate_cw_perform_date(payload, prev_cw)
 
-    if payload.perform_hrs or curr_req.due_hrs:
+    if payload.perform_hrs or (curr_req and curr_req.due_hrs):
         validate_cw_perf_hrs(payload, prev_cw, curr_req)
-    if payload.perform_cyc or curr_req.due_cyc:
+    if payload.perform_cyc or (curr_req and curr_req.due_cyc):
         validate_cw_perf_cyc(payload, prev_cw, curr_req)
 
     CW.objects.create(
