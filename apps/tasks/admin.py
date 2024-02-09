@@ -60,6 +60,8 @@ class CWAdmin(admin.ModelAdmin):
     list_display = (
         "related_task",
         "perform_date",
+        "perform_hrs",
+        "perform_cyc",
         "next_due_date",
         "next_due_hrs",
         "next_due_cyc",

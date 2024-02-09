@@ -13,6 +13,12 @@ from .interval_maths import get_prev_cw
 
 
 def validate_cw_perf_hrs(payload: ComplianceIn, prev_cw: CW, req: Requirements) -> None:
+
+    if req and req.due_hrs and payload.perform_hrs is None:
+        raise ValidationError(
+            "Can't create empty HRS cw with HRS due"
+        )
+
     if payload.perform_hrs > 1000000:
         raise ValidationError(
             "Performance HRS too large"
@@ -22,11 +28,6 @@ def validate_cw_perf_hrs(payload: ComplianceIn, prev_cw: CW, req: Requirements) 
             "Can't create negative HRS"
         )
 
-    if req and req.due_hrs and payload.perform_hrs is None:
-        raise ValidationError(
-            "Can't create no HRS cw with HRS due"
-        )
-
     if prev_cw and prev_cw.perform_hrs and prev_cw.perform_hrs > payload.perform_hrs:
         raise ValidationError(
             "Performance hours is before previous CW"
@@ -34,14 +35,22 @@ def validate_cw_perf_hrs(payload: ComplianceIn, prev_cw: CW, req: Requirements) 
 
 
 def validate_cw_perf_cyc(payload: ComplianceIn, prev_cw: CW, req: Requirements) -> None:
-    if prev_cw and prev_cw.perform_cyc and prev_cw.perform_cyc > payload.perform_cyc:
-        raise ValidationError(
-            "Performance cycles is before previous CW"
-        )
 
     if req and req.due_cyc and payload.perform_cyc is None:
         raise ValidationError(
-            "Can't create no CYC cw with CYC dues"
+            "Can't create empty CYC cw with CYC dues"
+        )
+
+    if payload.perform_cyc > 1000000:
+        raise ValidationError(
+            "Performance CYC too large"
+        )
+
+    # Надо ли делать валидацию > 0, если в модели PositiveInteger ?
+
+    if prev_cw and prev_cw.perform_cyc and prev_cw.perform_cyc > payload.perform_cyc:
+        raise ValidationError(
+            "Performance cycles is before previous CW"
         )
 
 
@@ -215,9 +224,9 @@ def create_cw(task: Task, payload: ComplianceIn) -> None:
     curr_req = task.curr_requirements
     validate_cw_perform_date(payload, prev_cw)
 
-    if payload.perform_hrs:
+    if payload.perform_hrs or curr_req.due_hrs:
         validate_cw_perf_hrs(payload, prev_cw, curr_req)
-    if payload.perform_cyc:
+    if payload.perform_cyc or curr_req.due_cyc:
         validate_cw_perf_cyc(payload, prev_cw, curr_req)
 
     CW.objects.create(
