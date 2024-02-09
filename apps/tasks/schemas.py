@@ -17,6 +17,7 @@ class ComplianceOut(Schema):
     next_due_cyc: int | None
     adj_mos: int | None
     adj_hrs: float | None
+    adj_cyc: int | None
 
 
 class ComplianceIn(Schema):
