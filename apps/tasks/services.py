@@ -89,6 +89,11 @@ def validate_dues(payload: ReqIn) -> None:
             "Can not create due months without unit"
         )
 
+    if payload.due_months_unit and not payload.due_months:
+        raise ValidationError(
+            "Cannot create empty due months with due_months_unit"
+        )
+
     if payload.due_months_unit and payload.due_months_unit not in UnitType.provide_choice_types("DUE_UNIT"):
         raise ValidationError(
             f"No {payload.due_months_unit} due months type"
@@ -276,7 +281,6 @@ def update_cw(task: Task, cw: CW, payload: ComplianceIn) -> None:
 
 def delete_cw(cw: CW) -> None:
     cw.delete()
-    update_next_due_date.delay(cw.task.pk)
 
 
 def create_req(task: Task, payload: ReqIn) -> Requirements:
