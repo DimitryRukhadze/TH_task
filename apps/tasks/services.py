@@ -268,9 +268,9 @@ def update_cw(task: Task, cw: CW, payload: ComplianceIn) -> None:
     validate_cw_is_latest(cw)
     validate_cw_perform_date(payload, prev_cw)
 
-    if payload.perform_hrs:
+    if payload.perform_hrs or (curr_req and curr_req.due_hrs):
         validate_cw_perf_hrs(payload, prev_cw, curr_req)
-    if payload.perform_cyc:
+    if payload.perform_cyc or (curr_req and curr_req.due_hrs):
         validate_cw_perf_cyc(payload, prev_cw, curr_req)
 
     cw.perform_date = payload.perform_date
